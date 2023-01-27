@@ -1,0 +1,117 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.peng.idea.plugin.builder-generator-plus-v2</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Builder-Generator-Plus-V2</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="rookie0peng@qq.com" url="">rookie0peng</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>
+        <![CDATA[
+            Generate Builder for a class.
+            <br>
+
+            New features:
+            <br>
+            2023-01-20
+            <ul>
+                <li>Auto skip FINAL and STATIC field when choose a class's member fields.</li>
+            </ul>
+            <br>
+
+            Generate Builder for a class.
+            <br>
+            (inside file and use keyboard shortcut: ALT + INSERT)
+            <br>
+            <br>
+            Customize template of Builder Generator, then personalized your builder class.
+            Also, you can set default configuration, it is still possible convenient for next use.
+            <br>
+            (path: Settings > Tools > Builder Generator Plus)
+            <br>
+            <br>
+            Switching between builder class and src class.
+            <br>
+            (inside file and use keyboard shortcut: CTRL + ALT + G)
+        ]]>
+    </description>
+    <change-notes>
+        <![CDATA[
+            2023-01-20
+            <ul>
+                <li>Auto skip FINAL and STATIC field when choose a class's member fields.</li>
+            </ul>
+            2022-05-01
+            <ul>
+                <li>Support Generate Builder for Inner Class</li>
+            </ul>
+            <ul>
+                <li>Support Custom Template of Builder</li>
+                <li>Support dynamic class name for Custom Template, and support autocomplete dynamic class name when configure template</li>
+                <li>Support choose Internal or Custom Template</li>
+            </ul>
+            2022-03-01
+            <ul>
+                <li>CTRL+ALT+G inside a file:</li>
+                <ul>
+                    <li>Create a builder class if it does not exist</li>
+                    <li>switches between src class and builder class if builder class exists</li>
+                </ul>
+            <li><strong>Builder Generator Plus</strong> menu (ALT+Insert) from a class:</li>
+                <ul>
+                    <li>Create a builder class if it does not exist</li>
+                    <li>Regenerate builder class if it exists</li>
+                </ul>
+            </ul>
+        ]]>
+    </change-notes>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+
+<!--    </extensions>-->
+
+    <actions>
+        <action id="com.peng.idea.plugin.builder.action.GoToBuilderAction"
+                class="com.peng.idea.plugin.builder.action.GoToBuilderAction"
+                text="Builder Generator Plus" description="Goes to/Generates Builder">
+            <add-to-group group-id="GoToCodeGroup" anchor="after" relative-to-action="GotoTest"/>
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
+        </action>
+        <action id="com.peng.idea.plugin.builder.action.GenerateBuilderAction"
+                class="com.peng.idea.plugin.builder.action.GenerateBuilderAction"
+                text="Builder Generator Plus" description="Generates/regenerates builder">
+            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.peng.idea.plugin.builder.manager.BuilderSettingsManager"/>
+        <applicationService serviceImplementation="com.peng.idea.plugin.builder.manager.BuilderTemplateManager"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.peng.idea.plugin.builder.action.BuilderSettingsConfigurable"
+                id="com.peng.idea.plugin.builder.action.BuilderSettingsConfigurable"
+                displayName="Builder Generator Plus"/>
+        <applicationConfigurable
+                parentId="com.peng.idea.plugin.builder.action.BuilderSettingsConfigurable"
+                instance="com.peng.idea.plugin.builder.action.BuilderTemplateConfigurable"
+                id="com.peng.idea.plugin.builder.action.BuilderTemplateConfigurable"
+                displayName="Builder Template Plus"/>
+    </extensions>
+</idea-plugin>
