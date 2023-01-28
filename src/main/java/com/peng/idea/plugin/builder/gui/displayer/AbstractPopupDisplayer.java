@@ -14,9 +14,8 @@ import javax.swing.*;
  */
 public abstract class AbstractPopupDisplayer {
 
-    @SuppressWarnings("rawtypes")
-    public void displayPopupChooser(Editor editor, JList list, Runnable runnable) {
-        PopupChooserBuilder builder = new PopupChooserBuilder(list);
+    public void displayPopupChooser(Editor editor, JList<?> list, Runnable runnable) {
+        PopupChooserBuilder<?> builder = new PopupChooserBuilder<>(list);
         builder.setTitle(getTitle()).
                 setItemChoosenCallback(runnable).
                 setMovable(true).

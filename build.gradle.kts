@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.intellij") version "1.10.1"
 }
 
 group = "com.peng.idea.plugin"
-version = "1.0.5"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ dependencies {
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-    version.set("2022.1")
+    version.set("2022.3")
     type.set("IC") // Target IDE Platform
 
 //    plugins.set(listOf(/* Plugin Dependencies */))
@@ -41,13 +41,13 @@ intellij {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
 
     patchPluginXml {
         sinceBuild.set("211")
-        untilBuild.set("221.*")
+        untilBuild.set("223.*")
     }
 
     signPlugin {
