@@ -1,18 +1,19 @@
 package com.peng.idea.plugin.builder.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import static java.util.Objects.isNull;
+import static com.peng.idea.plugin.builder.util.CollectionUtil.*;
 
 /**
  * <pre>
@@ -22,6 +23,18 @@ import static java.util.Objects.isNull;
  * </pre>
  */
 public class AutoCompleteUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoCompleteUtil.class);
+
+    private static final Robot ROBOT;
+
+    static {
+        try {
+            ROBOT = new Robot();
+        } catch (AWTException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -68,6 +81,7 @@ public class AutoCompleteUtil {
             model.addElement(item);
         }
         cbInput.setSelectedItem(null);
+        // comboBox 选中后，将内容传递到 textField
         cbInput.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -78,11 +92,24 @@ public class AutoCompleteUtil {
                 }
             }
         });
+        // comboBox 输入框自动跳过tab选中
+        cbInput.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                ROBOT.keyPress(KeyEvent.VK_TAB);
+            }
 
+            @Override
+            public void focusLost(FocusEvent e) {
+
+            }
+        });
+        // textField 按键事件处理
         txtInput.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
+//                LOGGER.info("txtInput--keyPressed: {}", e.getKeyCode());
                 setAdjusting(cbInput, true);
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     if (cbInput.isPopupVisible()) {
@@ -90,11 +117,13 @@ public class AutoCompleteUtil {
                     }
                 }
                 if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    e.setSource(cbInput);
-                    cbInput.dispatchEvent(e);
-                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        txtInput.setText(isNull(cbInput.getSelectedItem()) ? "" : cbInput.getSelectedItem().toString());
-                        cbInput.setPopupVisible(false);
+                    if (cbInput.isPopupVisible()) {
+                        e.setSource(cbInput);
+                        cbInput.dispatchEvent(e);
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                            txtInput.setText(isNull(cbInput.getSelectedItem()) ? "" : cbInput.getSelectedItem().toString());
+                            cbInput.setPopupVisible(false);
+                        }
                     }
                 }
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -103,16 +132,20 @@ public class AutoCompleteUtil {
                 setAdjusting(cbInput, false);
             }
         });
+        // textField 内容变更时，修改 comboBox 的候选框
         txtInput.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
+//                LOGGER.info("txtInput--insertUpdate now");
                 updateList();
             }
 
             public void removeUpdate(DocumentEvent e) {
+//                LOGGER.info("txtInput--removeUpdate now");
                 updateList();
             }
 
             public void changedUpdate(DocumentEvent e) {
+//                LOGGER.info("txtInput--changedUpdate now");
                 updateList();
             }
 
@@ -126,12 +159,69 @@ public class AutoCompleteUtil {
                             model.addElement(item);
                         }
                     }
+                } else {
+                    safeCollection(items).forEach(model::addElement);
+                }
+                cbInput.setPopupVisible(false);
+                cbInput.setPopupVisible(model.getSize() > 0);
+                setAdjusting(cbInput, false);
+            }
+        });
+        // 鼠标进入 textField 输入框时，修改 comboBox 的候选框
+        txtInput.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+//                LOGGER.info("txtInput--mouseClicked now");
+                setAdjusting(cbInput, true);
+                model.removeAllElements();
+                String input = txtInput.getText();
+                if (!input.isEmpty()) {
+                    for (String item : items) {
+                        if (item.toLowerCase().startsWith(input.toLowerCase())) {
+                            model.addElement(item);
+                        }
+                    }
+                } else {
+                    safeCollection(items).forEach(model::addElement);
                 }
                 cbInput.setPopupVisible(model.getSize() > 0);
                 setAdjusting(cbInput, false);
             }
         });
+        // textField 焦点事件处理
+        txtInput.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+//                LOGGER.info("txtInput--focusGained now");
+                setAdjusting(cbInput, true);
+                model.removeAllElements();
+                String input = txtInput.getText();
+                if (!input.isEmpty()) {
+                    for (String item : items) {
+                        if (item.toLowerCase().startsWith(input.toLowerCase())) {
+                            model.addElement(item);
+                        }
+                    }
+                } else {
+                    safeCollection(items).forEach(model::addElement);
+                }
+                cbInput.setPopupVisible(false);
+                cbInput.setPopupVisible(model.getSize() > 0);
+                setAdjusting(cbInput, false);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+//                LOGGER.info("txtInput--focusLost now");
+                model.removeAllElements();
+                cbInput.setPopupVisible(false);
+                setAdjusting(cbInput, false);
+            }
+        });
+
         txtInput.setLayout(new BorderLayout());
         txtInput.add(cbInput, BorderLayout.SOUTH);
+
+
     }
 }
