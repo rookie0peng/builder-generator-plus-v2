@@ -17,17 +17,6 @@
         <![CDATA[
             Generate Builder for a class.
             <br>
-
-            New features:
-            <br>
-            2023-01-20
-            <ul>
-                <li>Auto skip FINAL and STATIC field when choose a class's member fields.</li>
-            </ul>
-            <br>
-
-            Generate Builder for a class.
-            <br>
             (inside file and use keyboard shortcut: ALT + INSERT)
             <br>
             <br>
@@ -44,6 +33,12 @@
     </description>
     <change-notes>
         <![CDATA[
+            <br>
+            2023-02-07
+            <ul>
+                <li>In the scene of configure template, plugin will display all matched options when cursor focus gained or mouse clicked.</li>
+                <li>Class name field's inner ComboBox will auto skip when cursor focus gained.</li>
+            </ul>
             2023-01-20
             <ul>
                 <li>Auto skip FINAL and STATIC field when choose a class's member fields.</li>
