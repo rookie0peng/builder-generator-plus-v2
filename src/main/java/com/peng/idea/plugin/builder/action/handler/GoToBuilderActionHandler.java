@@ -30,12 +30,12 @@ public class GoToBuilderActionHandler extends AbstractBuilderActionHandler {
     }
 
     @Override
-    protected void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods) {
+    protected void doActionWhenClassToJumpIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods) {
         PsiClassUtil.navigateToClass(classToGo);
     }
 
     @Override
-    protected void doActionWhenClassToGoIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods) {
+    protected void doActionWhenClassToJumpIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods) {
         if (!isBuilder) {
             displayPopup(editor, buildMethods);
         }

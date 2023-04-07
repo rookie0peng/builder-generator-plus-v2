@@ -61,17 +61,17 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
 
     private void forwardToSpecificAction(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext) {
         boolean isBuilder = BuilderVerifierUtil.isBuilder(psiClassFromEditor);
-        PsiClass classToGo = findClassToGo(psiClassFromEditor, isBuilder);
+        PsiClass classToGo = findClassToJump(psiClassFromEditor, isBuilder);
         List<PsiMethod> buildMethods = findBuilderMethod(isBuilder ? classToGo : psiClassFromEditor);
 
         if (classToGo != null) {
-            doActionWhenClassToGoIsFound(editor, psiClassFromEditor, dataContext, isBuilder, classToGo, buildMethods);
+            doActionWhenClassToJumpIsFound(editor, psiClassFromEditor, dataContext, isBuilder, classToGo, buildMethods);
         } else {
-            doActionWhenClassToGoIsNotFound(editor, psiClassFromEditor, dataContext, isBuilder, buildMethods);
+            doActionWhenClassToJumpIsNotFound(editor, psiClassFromEditor, dataContext, isBuilder, buildMethods);
         }
     }
 
-    private PsiClass findClassToGo(PsiClass psiClassFromEditor, boolean isBuilder) {
+    private PsiClass findClassToJump(PsiClass psiClassFromEditor, boolean isBuilder) {
         if (isBuilder) {
             return BuilderFinderUtil.findClassForBuilder(psiClassFromEditor);
         }
@@ -84,9 +84,9 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
         return BuildMethodFinderUtil.findBuilderMethodV2(dstPsiClass);
     }
 
-    protected abstract void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods);
+    protected abstract void doActionWhenClassToJumpIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods);
 
-    protected abstract void doActionWhenClassToGoIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods);
+    protected abstract void doActionWhenClassToJumpIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods);
 
 }
 
