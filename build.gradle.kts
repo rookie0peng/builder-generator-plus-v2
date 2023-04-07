@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.10.1"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 
 group = "com.peng.idea.plugin"
-version = "1.1.1"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ dependencies {
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-    version.set("2022.3")
+    version.set("2023.1")
     type.set("IC") // Target IDE Platform
 
 //    plugins.set(listOf(/* Plugin Dependencies */))
@@ -46,8 +46,9 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("211")
-        untilBuild.set("223.*")
+        sinceBuild.set("231")
+        // https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html
+        untilBuild.set("231.*")
     }
 
     signPlugin {
