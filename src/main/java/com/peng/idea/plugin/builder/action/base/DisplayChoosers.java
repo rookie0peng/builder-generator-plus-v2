@@ -56,6 +56,26 @@ public class DisplayChoosers {
     }
 
     @SuppressWarnings("rawtypes")
+    public void runRemove(PsiClass existingBuilder, List<PsiMethod> existingBuildMethods) {
+        CreateBuilderDialog createBuilderDialog = this.showDialog(existingBuilder);
+        if (createBuilderDialog.isOK()) {
+            PsiDirectory targetDirectory = createBuilderDialog.getTargetDirectory();
+            String className = createBuilderDialog.getClassName();
+            String methodPrefix = createBuilderDialog.getMethodPrefix();
+            boolean innerBuilder = createBuilderDialog.isInnerBuilder();
+            boolean useSingleField = createBuilderDialog.useSingleField();
+            boolean hasButMethod = createBuilderDialog.hasButMethod();
+            List<PsiElementClassMember> fieldsToDisplay = this.getFieldsToIncludeInBuilder(psiClassFromEditor, innerBuilder, useSingleField, hasButMethod);
+            MemberChooser<PsiElementClassMember> memberChooserDialog = MemberChooserDialogUtil.getMemberChooserDialog(fieldsToDisplay, project);
+            memberChooserDialog.show();
+            this.writeBuilderIfNecessary(
+                    targetDirectory, className, methodPrefix, memberChooserDialog, createBuilderDialog,
+                    existingBuilder, existingBuildMethods
+            );
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
     private void writeBuilderIfNecessary(
             PsiDirectory targetDirectory, String className, String methodPrefix,
             MemberChooser<PsiElementClassMember> memberChooserDialog, CreateBuilderDialog createBuilderDialog,
@@ -71,6 +91,14 @@ public class DisplayChoosers {
     }
 
     private CreateBuilderDialog showDialog(PsiClass existingBuilder) {
+        PsiDirectory srcDir = PsiClassUtil.getPsiFileFromEditor(editor, project).getContainingDirectory();
+        PsiPackage srcPackage = PsiClassUtil.getPackage(srcDir);
+        CreateBuilderDialog dialog = CreateBuilderDialogUtil.createBuilderDialog(psiClassFromEditor, project, srcPackage, existingBuilder);
+        dialog.show();
+        return dialog;
+    }
+
+    private CreateBuilderDialog showDialogRemove(PsiClass existingBuilder) {
         PsiDirectory srcDir = PsiClassUtil.getPsiFileFromEditor(editor, project).getContainingDirectory();
         PsiPackage srcPackage = PsiClassUtil.getPackage(srcDir);
         CreateBuilderDialog dialog = CreateBuilderDialogUtil.createBuilderDialog(psiClassFromEditor, project, srcPackage, existingBuilder);

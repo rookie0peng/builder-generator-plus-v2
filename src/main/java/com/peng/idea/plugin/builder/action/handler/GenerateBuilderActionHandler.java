@@ -7,6 +7,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.peng.idea.plugin.builder.action.GoToBuilderAdditionalAction;
 import com.peng.idea.plugin.builder.action.RegenerateBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.RemoveBuilderAdditionalAction;
 import com.peng.idea.plugin.builder.action.base.AbstractBuilderActionHandler;
 import com.peng.idea.plugin.builder.component.AbstractPopupListComponent;
 import com.peng.idea.plugin.builder.gui.displayer.AbstractPopupDisplayer;
@@ -30,7 +31,7 @@ public class GenerateBuilderActionHandler extends AbstractBuilderActionHandler {
     }
 
     @Override
-    protected void doActionWhenClassToJumpIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods) {
+    protected void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods) {
         // 点击 Builder
         if (!isBuilder) {
             displayPopup(editor, classToGo, buildMethods);
@@ -38,7 +39,7 @@ public class GenerateBuilderActionHandler extends AbstractBuilderActionHandler {
     }
 
     @Override
-    protected void doActionWhenClassToJumpIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods) {
+    protected void doActionWhenClassToGoIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods) {
         // 点击 Builder
         if (!isBuilder) {
             displayChoosers.run(null, buildMethods);
@@ -49,10 +50,13 @@ public class GenerateBuilderActionHandler extends AbstractBuilderActionHandler {
 //        JList popupList = popupListFactory.getPopupList();
         JList<GotoTargetHandler.AdditionalAction> popupList = popupListComponent.getPopupList();
         popupDisplayer.displayPopupChooser(editor, popupList, () -> {
-            if (popupList.getSelectedValue() instanceof GoToBuilderAdditionalAction) {
+            GotoTargetHandler.AdditionalAction selectedValue = popupList.getSelectedValue();
+            if (selectedValue instanceof GoToBuilderAdditionalAction) {
                 PsiClassUtil.navigateToClass(classToGo);
-            } else if (popupList.getSelectedValue() instanceof RegenerateBuilderAdditionalAction) {
+            } else if (selectedValue instanceof RegenerateBuilderAdditionalAction) {
                 displayChoosers.run(classToGo, buildMethods);
+            } else if (selectedValue instanceof RemoveBuilderAdditionalAction) {
+//                displayChoosers.runRemove();
             }
         });
     }

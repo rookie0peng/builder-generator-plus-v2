@@ -81,25 +81,25 @@
     <!--    </extensions>-->
 
     <actions>
-        <action id="com.peng.idea.plugin.builder.action.JumpToBuilderAction"
+        <!--<action id="com.peng.idea.plugin.builder.action.JumpToBuilderAction"
                 class="com.peng.idea.plugin.builder.action.JumpToBuilderAction"
                 text="Builder Generator Plus" description="Jump to/Generates Builder">
             <add-to-group group-id="GoToCodeGroup" anchor="after" relative-to-action="GotoTest"/>
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="control alt J"/>
-        </action>
-        <!--<action id="com.peng.idea.plugin.builder.action.GoToBuilderAction"
+            <keyboard-shortcut keymap="$default" first-keystroke="control shift G"/>
+        </action>-->
+        <action id="com.peng.idea.plugin.builder.action.GoToBuilderAction"
                 class="com.peng.idea.plugin.builder.action.GoToBuilderAction"
                 text="Builder Generator Plus" description="Goes to/Generates Builder">
             <add-to-group group-id="GoToCodeGroup" anchor="after" relative-to-action="GotoTest"/>
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
-        </action>-->
+        </action>
         <action id="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
                 class="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
                 text="Builder Generator Plus" description="Generates/regenerates builder">
             <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt B"/>
         </action>
         <action id="com.peng.idea.plugin.builder.action.GenerateBuilderAction"
                 class="com.peng.idea.plugin.builder.action.GenerateBuilderAction"

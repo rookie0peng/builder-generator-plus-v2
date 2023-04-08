@@ -65,9 +65,9 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
         List<PsiMethod> buildMethods = findBuilderMethod(isBuilder ? classToGo : psiClassFromEditor);
 
         if (classToGo != null) {
-            doActionWhenClassToJumpIsFound(editor, psiClassFromEditor, dataContext, isBuilder, classToGo, buildMethods);
+            doActionWhenClassToGoIsFound(editor, psiClassFromEditor, dataContext, isBuilder, classToGo, buildMethods);
         } else {
-            doActionWhenClassToJumpIsNotFound(editor, psiClassFromEditor, dataContext, isBuilder, buildMethods);
+            doActionWhenClassToGoIsNotFound(editor, psiClassFromEditor, dataContext, isBuilder, buildMethods);
         }
     }
 
@@ -84,9 +84,9 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
         return BuildMethodFinderUtil.findBuilderMethodV2(dstPsiClass);
     }
 
-    protected abstract void doActionWhenClassToJumpIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods);
+    protected abstract void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods);
 
-    protected abstract void doActionWhenClassToJumpIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods);
+    protected abstract void doActionWhenClassToGoIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods);
 
 }
 

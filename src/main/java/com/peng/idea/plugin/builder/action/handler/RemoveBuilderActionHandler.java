@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.peng.idea.plugin.builder.action.GoToBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.RegenerateBuilderAdditionalAction;
 import com.peng.idea.plugin.builder.action.base.AbstractBuilderActionHandler;
 import com.peng.idea.plugin.builder.component.AbstractPopupListComponent;
 import com.peng.idea.plugin.builder.gui.displayer.AbstractPopupDisplayer;
@@ -14,15 +16,13 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * <pre>
- *  @description:
- *  @author: qingpeng
- *  @date: 2023/1/19 16:03
- * </pre>
+ * @description:
+ * @author: qingpeng
+ * @date: 2022/10/29 21:17
  */
-public class GoToBuilderActionHandler extends AbstractBuilderActionHandler {
+public class RemoveBuilderActionHandler extends AbstractBuilderActionHandler {
 
-    public GoToBuilderActionHandler(
+    public RemoveBuilderActionHandler(
             AbstractPopupDisplayer popupDisplayer,
             AbstractPopupListComponent<GotoTargetHandler.AdditionalAction> popupListComponent
     ) {
@@ -31,19 +31,30 @@ public class GoToBuilderActionHandler extends AbstractBuilderActionHandler {
 
     @Override
     protected void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods) {
-        PsiClassUtil.navigateToClass(classToGo);
+        // 点击 Builder
+        if (!isBuilder) {
+            displayPopup(editor, classToGo, buildMethods);
+        }
     }
 
     @Override
     protected void doActionWhenClassToGoIsNotFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, List<PsiMethod> buildMethods) {
+        // 点击 Builder
         if (!isBuilder) {
-            displayPopup(editor, buildMethods);
+            displayChoosers.run(null, buildMethods);
         }
     }
 
-    private void displayPopup(Editor editor, List<PsiMethod> buildMethods) {
+    private void displayPopup(Editor editor, PsiClass classToGo, List<PsiMethod> buildMethods) {
 //        JList popupList = popupListFactory.getPopupList();
         JList<GotoTargetHandler.AdditionalAction> popupList = popupListComponent.getPopupList();
-        popupDisplayer.displayPopupChooser(editor, popupList, () -> displayChoosers.run(null, buildMethods));
+        popupDisplayer.displayPopupChooser(editor, popupList, () -> {
+            if (popupList.getSelectedValue() instanceof GoToBuilderAdditionalAction) {
+                PsiClassUtil.navigateToClass(classToGo);
+            } else if (popupList.getSelectedValue() instanceof RegenerateBuilderAdditionalAction) {
+                displayChoosers.run(classToGo, buildMethods);
+            }
+        });
     }
 }
+

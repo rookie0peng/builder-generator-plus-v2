@@ -4,6 +4,7 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.ui.components.JBList;
 import com.peng.idea.plugin.builder.action.GoToBuilderAdditionalAction;
 import com.peng.idea.plugin.builder.action.RegenerateBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.RemoveBuilderAdditionalAction;
 
 import javax.swing.*;
 
@@ -20,6 +21,10 @@ public class GenerateBuilderPopupListComponent extends AbstractPopupListComponen
 
     @Override
     protected JList<GotoTargetHandler.AdditionalAction> createList() {
-        return new JBList<>(List.of(GoToBuilderAdditionalAction.INSTANCE, RegenerateBuilderAdditionalAction.INSTANCE));
+        return new JBList<>(List.of(
+                RegenerateBuilderAdditionalAction.INSTANCE,
+                GoToBuilderAdditionalAction.INSTANCE,
+                RemoveBuilderAdditionalAction.INSTANCE
+        ));
     }
 }

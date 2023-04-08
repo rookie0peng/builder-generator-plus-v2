@@ -149,7 +149,7 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
         // useSingleField
 
         myMainPanel = builder.getPanel();
-        setTitle("Add Builder");
+        setTitle("Edit Builder");
     }
 
     public BuilderTemplate getTemplate() {
