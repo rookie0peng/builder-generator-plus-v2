@@ -8,4 +8,6 @@ package com.peng.idea.plugin.builder.api;
  * </pre>
  */
 public class RemoveBuilderDialogDO {
+
+
 }
