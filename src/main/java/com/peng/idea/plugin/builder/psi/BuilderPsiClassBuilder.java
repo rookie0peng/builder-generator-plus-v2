@@ -302,17 +302,17 @@ public class BuilderPsiClassBuilder {
     }
 
     private String getDefaultValue(PsiType type) {
-        if (type.equals(PsiType.BOOLEAN)) {
+        if (type.equals(PsiTypes.booleanType())) {
             return "false";
-        } else if (type.equals(PsiType.BYTE) || type.equals(PsiType.SHORT) || type.equals(PsiType.INT)) {
+        } else if (type.equals(PsiTypes.byteType()) || type.equals(PsiTypes.shortType()) || type.equals(PsiTypes.intType())) {
             return "0";
-        } else if (type.equals(PsiType.LONG)) {
+        } else if (type.equals(PsiTypes.longType())) {
             return "0L";
-        } else if (type.equals(PsiType.FLOAT)) {
+        } else if (type.equals(PsiTypes.floatType())) {
             return "0.0f";
-        } else if (type.equals(PsiType.DOUBLE)) {
+        } else if (type.equals(PsiTypes.doubleType())) {
             return "0.0d";
-        } else if (type.equals(PsiType.CHAR)) {
+        } else if (type.equals(PsiTypes.charType())) {
             return "'\\u0000'";
         }
         return "null";
