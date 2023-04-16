@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.peng.idea.plugin.builder.gui.CreateBuilderDialog;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 
 /**
  * <pre>
@@ -14,11 +15,13 @@ import com.peng.idea.plugin.builder.gui.CreateBuilderDialog;
  */
 public class CreateBuilderDialogUtil {
 
-    private static final String BUILDER_SUFFIX = "Builder";
-    private static final String METHOD_PREFIX = "with";
     private static final String DIALOG_NAME = "CreateBuilder";
 
     public static CreateBuilderDialog createBuilderDialog(PsiClass sourceClass, Project project, PsiPackage srcPackage, PsiClass existingBuilder) {
-        return new CreateBuilderDialog(project, DIALOG_NAME, sourceClass, sourceClass.getName() + BUILDER_SUFFIX, METHOD_PREFIX, srcPackage, existingBuilder);
+        return new CreateBuilderDialog(
+                project, DIALOG_NAME, sourceClass,
+                sourceClass.getName() + BuilderConstant.BUILDER_SUFFIX, BuilderConstant.METHOD_PREFIX, srcPackage,
+                existingBuilder
+        );
     }
 }

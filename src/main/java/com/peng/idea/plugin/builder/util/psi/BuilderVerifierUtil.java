@@ -1,8 +1,11 @@
 package com.peng.idea.plugin.builder.util.psi;
 
 import com.intellij.psi.PsiClass;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 
 import java.util.Objects;
+
+import static java.util.Objects.*;
 
 /**
  * <pre>
@@ -13,9 +16,11 @@ import java.util.Objects;
  */
 public class BuilderVerifierUtil {
 
-    private static final String SUFFIX = "Builder";
-
     public static boolean isBuilder(PsiClass psiClass) {
-        return Objects.requireNonNull(psiClass.getName()).endsWith(SUFFIX);
+        return nonNull(psiClass) && nonNull(psiClass.getName()) && psiClass.getName().endsWith(BuilderConstant.BUILDER_SUFFIX);
+    }
+
+    public static boolean nonBuilder(PsiClass psiClass) {
+        return !isBuilder(psiClass);
     }
 }

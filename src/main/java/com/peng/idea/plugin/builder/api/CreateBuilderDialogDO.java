@@ -15,20 +15,32 @@ import java.util.List;
  *  @date: 2023/4/16 11:37
  * </pre>
  */
-public class DisplayChooserDO {
+public class CreateBuilderDialogDO {
 
+    /**
+     * current project
+     */
     private Project project;
 
+    /**
+     * editor of cursor
+     */
     private Editor editor;
 
-    private PsiClass psiClassFromEditor;
+    /**
+     * PSI class of editor
+     */
+    private PsiClass editorPsiClass;
 
+    /**
+     * class
+     */
     private PsiClass classToOperate;
 
     private List<PsiMethod> buildMethodToOperates;
 
-    public static DisplayChooserDOBuilder builder() {
-        return DisplayChooserDOBuilder.aDisplayChooserDO();
+    public static CreateBuilderDialogDOBuilder builder() {
+        return CreateBuilderDialogDOBuilder.aCreateBuilderDialogDO();
     }
 
     public Project getProject() {
@@ -47,12 +59,12 @@ public class DisplayChooserDO {
         this.editor = editor;
     }
 
-    public PsiClass getPsiClassFromEditor() {
-        return psiClassFromEditor;
+    public PsiClass getEditorPsiClass() {
+        return editorPsiClass;
     }
 
-    public void setPsiClassFromEditor(PsiClass psiClassFromEditor) {
-        this.psiClassFromEditor = psiClassFromEditor;
+    public void setEditorPsiClass(PsiClass editorPsiClass) {
+        this.editorPsiClass = editorPsiClass;
     }
 
     public PsiClass getClassToOperate() {
@@ -76,59 +88,59 @@ public class DisplayChooserDO {
         return "DisplayChooserDO{" +
                 "project=" + project +
                 ", editor=" + editor +
-                ", psiClassFromEditor=" + psiClassFromEditor +
+                ", psiClassFromEditor=" + editorPsiClass +
                 ", classToOperate=" + classToOperate +
                 ", buildMethodToOperates=" + buildMethodToOperates +
                 '}';
     }
 
-    public static final class DisplayChooserDOBuilder {
+    public static final class CreateBuilderDialogDOBuilder {
         private Project project;
         private Editor editor;
         private PsiClass psiClassFromEditor;
         private PsiClass classToOperate;
         private List<PsiMethod> buildMethodToOperates;
 
-        private DisplayChooserDOBuilder() {
+        private CreateBuilderDialogDOBuilder() {
         }
 
-        public static DisplayChooserDOBuilder aDisplayChooserDO() {
-            return new DisplayChooserDOBuilder();
+        public static CreateBuilderDialogDOBuilder aCreateBuilderDialogDO() {
+            return new CreateBuilderDialogDOBuilder();
         }
 
-        public DisplayChooserDOBuilder project(Project project) {
+        public CreateBuilderDialogDOBuilder project(Project project) {
             this.project = project;
             return this;
         }
 
-        public DisplayChooserDOBuilder editor(Editor editor) {
+        public CreateBuilderDialogDOBuilder editor(Editor editor) {
             this.editor = editor;
             return this;
         }
 
-        public DisplayChooserDOBuilder psiClassFromEditor(PsiClass psiClassFromEditor) {
+        public CreateBuilderDialogDOBuilder psiClassFromEditor(PsiClass psiClassFromEditor) {
             this.psiClassFromEditor = psiClassFromEditor;
             return this;
         }
 
-        public DisplayChooserDOBuilder classToOperate(PsiClass classToOperate) {
+        public CreateBuilderDialogDOBuilder classToOperate(PsiClass classToOperate) {
             this.classToOperate = classToOperate;
             return this;
         }
 
-        public DisplayChooserDOBuilder buildMethodToOperates(List<PsiMethod> buildMethodToOperates) {
+        public CreateBuilderDialogDOBuilder buildMethodToOperates(List<PsiMethod> buildMethodToOperates) {
             this.buildMethodToOperates = buildMethodToOperates;
             return this;
         }
 
-        public DisplayChooserDO build() {
-            DisplayChooserDO displayChooserDO = new DisplayChooserDO();
-            displayChooserDO.setProject(project);
-            displayChooserDO.setEditor(editor);
-            displayChooserDO.setPsiClassFromEditor(psiClassFromEditor);
-            displayChooserDO.setClassToOperate(classToOperate);
-            displayChooserDO.setBuildMethodToOperates(buildMethodToOperates);
-            return displayChooserDO;
+        public CreateBuilderDialogDO build() {
+            CreateBuilderDialogDO createBuilderDialogDO = new CreateBuilderDialogDO();
+            createBuilderDialogDO.setProject(project);
+            createBuilderDialogDO.setEditor(editor);
+            createBuilderDialogDO.setEditorPsiClass(psiClassFromEditor);
+            createBuilderDialogDO.setClassToOperate(classToOperate);
+            createBuilderDialogDO.setBuildMethodToOperates(buildMethodToOperates);
+            return createBuilderDialogDO;
         }
     }
 }

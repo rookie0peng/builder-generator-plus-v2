@@ -338,7 +338,7 @@ public class CreateBuilderDialog extends DialogWrapper {
     @Override
     protected void doHelpAction() {
         Messages.showInfoMessage(
-                "You can configure Custom Template in this path: Settings/Tools/Builder",
+                "You can configure Custom Template in this path: Settings/Tools/Builder Generator Plus",
                 "Tips");
 //        super.doHelpAction();
     }

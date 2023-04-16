@@ -6,6 +6,8 @@ import com.intellij.psi.PsiMethod;
 
 import java.util.Objects;
 
+import static java.util.Objects.*;
+
 /**
  * <pre>
  *  @description:
@@ -19,6 +21,8 @@ public class BuilderFinderUtil {
     public static final String EMPTY_STRING = "";
 
     public static PsiClass findBuilderForClass(PsiClass psiClass) {
+        if (isNull(psiClass))
+            return null;
         PsiClass innerBuilderClass = tryFindInnerBuilder(psiClass);
         if (innerBuilderClass != null) {
             return innerBuilderClass;
@@ -41,6 +45,8 @@ public class BuilderFinderUtil {
     }
 
     public static PsiClass findClassForBuilder(PsiClass psiClass) {
+        if (isNull(psiClass))
+            return null;
         String searchName = Objects.requireNonNull(psiClass.getName()).replaceFirst(SEARCH_PATTERN, EMPTY_STRING);
         return findClass(psiClass, searchName);
     }

@@ -8,8 +8,10 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
-import com.peng.idea.plugin.builder.api.DisplayChooserDO;
+import com.peng.idea.plugin.builder.api.CreateBuilderDialogDO;
+import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.gui.CreateBuilderDialog;
+import com.peng.idea.plugin.builder.gui.RemoveBuilderDialog;
 import com.peng.idea.plugin.builder.psi.PsiFieldSelector;
 import com.peng.idea.plugin.builder.psi.model.PsiFieldsForBuilder;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
@@ -31,13 +33,13 @@ import static com.peng.idea.plugin.builder.util.CollectionUtil.safeList;
 public class DisplayChooserUtil {
 
     @SuppressWarnings("rawtypes")
-    public static void run(DisplayChooserDO chooserDO) {
+    public static void run(CreateBuilderDialogDO chooserDO) {
         CreateBuilderDialog createBuilderDialog = showDialog(chooserDO);
         if (createBuilderDialog.isOK()) {
             boolean innerBuilder = createBuilderDialog.isInnerBuilder();
             boolean useSingleField = createBuilderDialog.useSingleField();
             boolean hasButMethod = createBuilderDialog.hasButMethod();
-            List<PsiElementClassMember> fieldsToDisplay = getFieldsToIncludeInBuilder(chooserDO.getPsiClassFromEditor(), innerBuilder, useSingleField, hasButMethod);
+            List<PsiElementClassMember> fieldsToDisplay = getFieldsToIncludeInBuilder(chooserDO.getEditorPsiClass(), innerBuilder, useSingleField, hasButMethod);
             MemberChooser<PsiElementClassMember> memberChooserDialog = MemberChooserDialogUtil.getMemberChooserDialog(fieldsToDisplay, chooserDO.getProject());
             memberChooserDialog.show();
             writeBuilderIfNecessary(memberChooserDialog, createBuilderDialog, chooserDO);
@@ -64,10 +66,10 @@ public class DisplayChooserUtil {
 //        }
 //    }
 
-    private static CreateBuilderDialog showDialog(DisplayChooserDO chooserDO) {
+    private static CreateBuilderDialog showDialog(CreateBuilderDialogDO chooserDO) {
         Editor editor = chooserDO.getEditor();
         Project project = chooserDO.getProject();
-        PsiClass psiClassFromEditor = chooserDO.getPsiClassFromEditor();
+        PsiClass psiClassFromEditor = chooserDO.getEditorPsiClass();
         PsiClass classToOperate = chooserDO.getClassToOperate();
         PsiDirectory srcDir = PsiClassUtil.getPsiFileFromEditor(editor, project).getContainingDirectory();
         PsiPackage srcPackage = PsiClassUtil.getPackage(srcDir);
@@ -91,11 +93,11 @@ public class DisplayChooserUtil {
 
     @SuppressWarnings("rawtypes")
     private static void writeBuilderIfNecessary(
-            MemberChooser<PsiElementClassMember> memberDialog, CreateBuilderDialog createDialog, DisplayChooserDO chooserDO
+            MemberChooser<PsiElementClassMember> memberDialog, CreateBuilderDialog createDialog, CreateBuilderDialogDO chooserDO
     ) {
         if (memberDialog.isOK()) {
             Project project = chooserDO.getProject();
-            PsiClass psiClassFromEditor = chooserDO.getPsiClassFromEditor();
+            PsiClass psiClassFromEditor = chooserDO.getEditorPsiClass();
             PsiClass classToOperate = chooserDO.getClassToOperate();
             List<PsiMethod> buildMethodToOperates = chooserDO.getBuildMethodToOperates();
             List<PsiElementClassMember> selectedElements = safeList(memberDialog.getSelectedElements());

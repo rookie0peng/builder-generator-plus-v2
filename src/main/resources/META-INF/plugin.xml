@@ -100,17 +100,23 @@
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
         </action>
-        <action id="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
+        <action id="com.peng.idea.plugin.builder.action.RemoveBuilderAction"
+                class="com.peng.idea.plugin.builder.action.RemoveBuilderAction"
+                text="Remove Builder Class" description="Remove builder class">
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt D"/>
+        </action>
+        <!--<action id="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
                 class="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
                 text="Builder Generator Plus" description="Generates/regenerates builder">
             <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control alt B"/>
-        </action>
+        </action>-->
         <action id="com.peng.idea.plugin.builder.action.GenerateBuilderAction"
                 class="com.peng.idea.plugin.builder.action.GenerateBuilderAction"
                 text="Builder Generator Plus" description="Generates/regenerates builder">
             <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
         </action>
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

@@ -90,7 +90,7 @@ public class BuilderPsiClassBuilder {
         psiFieldsForSetters = context.getPsiFieldsForBuilder().getFieldsForSetters();
         psiFieldsForConstructor = context.getPsiFieldsForBuilder().getFieldsForConstructor();
         allSelectedPsiFields = context.getPsiFieldsForBuilder().getAllSelectedFields();
-        useSingleField = context.useSingleField();
+        useSingleField = context.isUseSingleField();
         bestConstructor = context.getPsiFieldsForBuilder().getBestConstructor();
         methodCreator = new MethodCreator(elementFactory, builderClassName);
         butMethodCreator = new ButMethodCreator(elementFactory);
