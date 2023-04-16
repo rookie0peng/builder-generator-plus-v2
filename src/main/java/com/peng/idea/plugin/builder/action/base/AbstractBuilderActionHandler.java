@@ -61,7 +61,7 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
 
     private void forwardToSpecificAction(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext) {
         boolean isBuilder = BuilderVerifierUtil.isBuilder(psiClassFromEditor);
-        PsiClass classToGo = findClassToJump(psiClassFromEditor, isBuilder);
+        PsiClass classToGo = findClassToGo(psiClassFromEditor, isBuilder);
         List<PsiMethod> buildMethods = findBuilderMethod(isBuilder ? classToGo : psiClassFromEditor);
 
         if (classToGo != null) {
@@ -71,7 +71,7 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
         }
     }
 
-    private PsiClass findClassToJump(PsiClass psiClassFromEditor, boolean isBuilder) {
+    private PsiClass findClassToGo(PsiClass psiClassFromEditor, boolean isBuilder) {
         if (isBuilder) {
             return BuilderFinderUtil.findClassForBuilder(psiClassFromEditor);
         }

@@ -101,7 +101,7 @@ public class BuilderWriterComputable implements Computable<PsiElement> {
     }
 
     private void addButMethodIfNecessary(BuilderPsiClassBuilder builder) {
-        if (context.hasButMethod()) {
+        if (context.isHasButMethod()) {
             builder.withButMethod();
         }
     }

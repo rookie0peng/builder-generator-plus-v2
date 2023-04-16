@@ -21,13 +21,19 @@ import static java.util.Objects.isNull;
 
 /**
  * <pre>
- *  @description:
+ *  @description: PSI class util
  *  @author: qingpeng
  *  @date: 2022/5/14 16:44
  * </pre>
  */
 public class PsiClassUtil {
 
+    /**
+     * Get the class where the cursor is located
+     * @param editor editor of cursor
+     * @param project current project
+     * @return class
+     */
     public static Optional<PsiClass> getCursorPsiClass(Editor editor, Project project) {
         if (isNull(editor) || isNull(project))
             return Optional.empty();
@@ -51,6 +57,11 @@ public class PsiClassUtil {
         }
     }
 
+    /**
+     * Get the parent PSI element of PSI element
+     * @param element PSI element
+     * @return parent PSI element
+     */
     private static PsiElement getParent(PsiElement element) {
         return isNull(element) ? null : element.getParent();
     }
