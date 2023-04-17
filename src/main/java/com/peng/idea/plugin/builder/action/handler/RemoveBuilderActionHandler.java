@@ -2,17 +2,22 @@ package com.peng.idea.plugin.builder.action.handler;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.messages.MessageDialog;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.peng.idea.plugin.builder.api.CreateBuilderDialogDO;
 import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.gui.RemoveBuilderDialog;
+import com.peng.idea.plugin.builder.util.BuildMethodFinderUtil;
 import com.peng.idea.plugin.builder.util.Pair;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.psi.BuilderFinderUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderVerifierUtil;
 import com.peng.idea.plugin.builder.util.psi.GuiHelperUtil;
@@ -23,6 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.peng.idea.plugin.builder.util.CollectionUtil.safeStream;
+import static java.util.Objects.isNull;
 
 /**
  * <pre>
@@ -42,10 +51,8 @@ public class RemoveBuilderActionHandler extends AbstractBuilderActionHandlerV2 {
         PsiClass editorPsiClass = PsiClassUtil.getCursorPsiClass(editor, project).orElse(null);
         PsiClass srcPsiClass = BuilderFinderUtil.findClassForBuilder(editorPsiClass);
         PsiClass dstPsiClass = BuilderFinderUtil.findBuilderForClass(editorPsiClass);
-        if (BuilderVerifierUtil.nonBuilder(srcPsiClass) && BuilderVerifierUtil.nonBuilder(dstPsiClass)) {
-            Messages.showInfoMessage(
-                    "Can't find builder class!",
-                    "Tips");
+        if (BuilderVerifierUtil.nonBuilder(editorPsiClass) && BuilderVerifierUtil.nonBuilder(dstPsiClass)) {
+            Messages.showInfoMessage("Can't find builder class!", "Tips");
             return;
         }
         RemoveBuilderDialogDO removeDO = RemoveBuilderDialogDO.builder()
@@ -56,6 +63,30 @@ public class RemoveBuilderActionHandler extends AbstractBuilderActionHandlerV2 {
         removeBuilderDialog.show();
         if (removeBuilderDialog.isOK()) {
             LOGGER.info("Delete builder class success!");
+            Runnable runnable = () -> safeStream(removeBuilderDialog.getTripleComponents()).forEach(component -> {
+                if (isNull(component.getKey()))
+                    return;
+                if (!component.getCheckBox().isSelected())
+                    return;
+                switch (component.getKey()) {
+                    case BuilderConstant.RemoveBuilder.DialogComponentKey.EDITOR_PSI_CLASS -> {
+                        Optional.ofNullable(removeDO.getSrcPsiClass())
+                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+                                .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
+                        Optional.ofNullable(removeDO.getEditorPsiClass()).ifPresent(PsiElement::delete);
+                    }
+                    case BuilderConstant.RemoveBuilder.DialogComponentKey.DST_PSI_CLASS -> {
+                        Optional.ofNullable(removeDO.getEditorPsiClass())
+                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+                                .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
+                        Optional.ofNullable(removeDO.getDstPsiClass()).ifPresent(PsiElement::delete);
+                    }
+                }
+            });
+//            CommandProcessor commandProcessor = PsiClassUtil.getCommandProcessor();
+//            commandProcessor.executeCommand(project, runnable, "Remove Builder", null);
+            Application application = PsiClassUtil.getApplication();
+            application.runWriteAction(runnable);
         }
     }
 

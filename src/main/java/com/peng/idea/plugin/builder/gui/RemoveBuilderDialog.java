@@ -1,14 +1,18 @@
 package com.peng.idea.plugin.builder.gui;
 
 import com.intellij.CommonBundle;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.IncorrectOperationException;
 import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.api.TripleComponentDO;
+import com.peng.idea.plugin.builder.util.BuildMethodFinderUtil;
 import com.peng.idea.plugin.builder.util.Pair;
 import com.peng.idea.plugin.builder.util.PanelUtil;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
@@ -22,9 +26,11 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.*;
+import static com.peng.idea.plugin.builder.util.CollectionUtil.*;
 
 /**
  * <pre>
@@ -74,6 +80,33 @@ public class RemoveBuilderDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         LOGGER.info("click OK action!");
+        try {
+//            Runnable runnable = () -> safeStream(tripleComponents).forEach(component -> {
+//                if (isNull(component.getKey()))
+//                    return;
+//                if (!component.getCheckBox().isSelected())
+//                    return;
+//                switch (component.getKey()) {
+//                    case BuilderConstant.RemoveBuilder.DialogComponentKey.EDITOR_PSI_CLASS -> {
+//                        Optional.ofNullable(removeDO.getSrcPsiClass())
+//                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+//                                .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
+//                        Optional.ofNullable(removeDO.getEditorPsiClass()).ifPresent(PsiElement::delete);
+//                    }
+//                    case BuilderConstant.RemoveBuilder.DialogComponentKey.DST_PSI_CLASS -> {
+//                        Optional.ofNullable(removeDO.getEditorPsiClass())
+//                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+//                                .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
+//                        Optional.ofNullable(removeDO.getDstPsiClass()).ifPresent(PsiElement::delete);
+//                    }
+//                }
+//            });
+//            Application application = PsiClassUtil.getApplication();
+//            application.runWriteAction(runnable);
+        } catch (Exception e) {
+            LOGGER.error("Click Remove Builder Dialog Exception: ", e);
+            GuiHelperUtil.showMessageDialog(project, e.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+        }
         callSuper();
 //        registerEntry(RECENTS_KEY, targetPackageField.getText());
 //        Module module = PsiClassUtil.findModuleForPsiClass(sourceClass, project);
@@ -109,7 +142,10 @@ public class RemoveBuilderDialog extends DialogWrapper {
         // column name
 
         // builder class to remove
-        List<Pair<String, PsiClass>> pairs = Stream.of(Pair.of("1", removeDO.getEditorPsiClass()), Pair.of("2", removeDO.getDstPsiClass()))
+        List<Pair<String, PsiClass>> pairs = Stream.of(
+                        Pair.of(BuilderConstant.RemoveBuilder.DialogComponentKey.EDITOR_PSI_CLASS, removeDO.getEditorPsiClass()),
+                        Pair.of(BuilderConstant.RemoveBuilder.DialogComponentKey.DST_PSI_CLASS, removeDO.getDstPsiClass())
+                )
                 .filter(pair -> nonNull(pair.getSecond()))
                 .filter(pair -> nonNull(pair.getSecond().getName()) && pair.getSecond().getName().endsWith(BuilderConstant.BUILDER_SUFFIX))
                 .toList();
@@ -117,6 +153,7 @@ public class RemoveBuilderDialog extends DialogWrapper {
             String key = pair.getFirst();
             PsiClass psiClass = pair.getSecond();
             return TripleComponentDO.builder()
+                    .key(pair.getFirst())
                     .clazzName(new JTextField(psiClass.getName()))
                     .qualifiedName(new JTextField(psiClass.getQualifiedName()))
                     .checkBox(generateWithDefaultValue(pairs.size() == 1 || key.equals("2")))
@@ -135,5 +172,13 @@ public class RemoveBuilderDialog extends DialogWrapper {
         JCheckBox checkBox = new JCheckBox();
         checkBox.setSelected(isCheck);
         return checkBox;
+    }
+
+    public RemoveBuilderDialogDO getRemoveDO() {
+        return removeDO;
+    }
+
+    public List<TripleComponentDO> getTripleComponents() {
+        return tripleComponents;
     }
 }

@@ -12,6 +12,8 @@ import java.util.StringJoiner;
  */
 public class TripleComponentDO {
 
+    private String key;
+
     /**
      * class name
      */
@@ -29,6 +31,14 @@ public class TripleComponentDO {
 
     public static TripleComponentDOBuilder builder() {
         return TripleComponentDOBuilder.aTripleComponentDO();
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public JTextField getClazzName() {
@@ -65,6 +75,7 @@ public class TripleComponentDO {
     }
 
     public static final class TripleComponentDOBuilder {
+        private String key;
         private JTextField clazzName;
         private JTextField qualifiedName;
         private JCheckBox checkBox;
@@ -74,6 +85,11 @@ public class TripleComponentDO {
 
         public static TripleComponentDOBuilder aTripleComponentDO() {
             return new TripleComponentDOBuilder();
+        }
+
+        public TripleComponentDOBuilder key(String key) {
+            this.key = key;
+            return this;
         }
 
         public TripleComponentDOBuilder clazzName(JTextField clazzName) {
@@ -93,6 +109,7 @@ public class TripleComponentDO {
 
         public TripleComponentDO build() {
             TripleComponentDO tripleComponentDO = new TripleComponentDO();
+            tripleComponentDO.setKey(key);
             tripleComponentDO.setClazzName(clazzName);
             tripleComponentDO.setQualifiedName(qualifiedName);
             tripleComponentDO.setCheckBox(checkBox);
