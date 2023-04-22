@@ -16,6 +16,8 @@ public final class BuilderConstant {
 
     public static final class RemoveBuilder {
 
+        public static final String DIALOG_NAME = "RemoveBuilder";
+
         public static final class DialogComponentKey {
 
             public static final String SRC_PSI_CLASS = "srcPsiClass";

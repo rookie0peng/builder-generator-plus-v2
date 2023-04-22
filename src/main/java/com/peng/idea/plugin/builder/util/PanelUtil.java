@@ -86,11 +86,14 @@ public class PanelUtil {
 
     public void addTripleComponent(JComponent jComponent, JComponent jComponent2, JComponent jComponent3) {
         GridBagConstraints gbConstraints = new GridBagConstraints();
+        gbConstraints.ipadx = 0;
+        gbConstraints.ipady = 0;
+
 
         gbConstraints.insets = JBUI.insets(4, 8);
         gbConstraints.gridx = 0;
         gbConstraints.gridy = line;
-        gbConstraints.weightx = 0;
+        gbConstraints.weightx = 0.5;
         gbConstraints.gridwidth = 1;
         gbConstraints.fill = GridBagConstraints.HORIZONTAL;
         gbConstraints.anchor = GridBagConstraints.WEST;
@@ -100,17 +103,17 @@ public class PanelUtil {
         gbConstraints.insets = JBUI.insets(4, 8);
         gbConstraints.gridx = 1;
         gbConstraints.gridy = line;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
+        gbConstraints.weightx = 0.5;
+        gbConstraints.gridwidth = 3;
         gbConstraints.fill = GridBagConstraints.HORIZONTAL;
         gbConstraints.anchor = GridBagConstraints.WEST;
 
         myPanel.add(jComponent2, gbConstraints);
 
         gbConstraints.insets = JBUI.insets(4, 8);
-        gbConstraints.gridx = 2;
+        gbConstraints.gridx = 4;
         gbConstraints.gridy = line;
-        gbConstraints.weightx = 0;
+        gbConstraints.weightx = 0.5;
         gbConstraints.gridwidth = 1;
         gbConstraints.fill = GridBagConstraints.HORIZONTAL;
         gbConstraints.anchor = GridBagConstraints.WEST;
