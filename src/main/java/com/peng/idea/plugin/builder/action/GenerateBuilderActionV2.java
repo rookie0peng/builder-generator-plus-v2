@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.util.xml.ui.DomCollectionControl;
 import com.peng.idea.plugin.builder.action.base.AbstractBuilderAction;
 import com.peng.idea.plugin.builder.action.handler.GenerateBuilderActionHandler;
+import com.peng.idea.plugin.builder.action.handler.GenerateBuilderActionHandlerV2;
 import com.peng.idea.plugin.builder.component.GenerateBuilderPopupListComponent;
 import com.peng.idea.plugin.builder.gui.displayer.GenerateBuilderPopupDisplayer;
 
@@ -22,8 +23,7 @@ public class GenerateBuilderActionV2 extends EditorAction {
 //        super(defaultHandler);
 //    }
 
-    private static final GenerateBuilderActionHandler generateBuilderActionHandler =
-            new GenerateBuilderActionHandler(GenerateBuilderPopupDisplayer.INSTANCE, GenerateBuilderPopupListComponent.INSTANCE);
+    private static final GenerateBuilderActionHandlerV2 generateBuilderActionHandler = new GenerateBuilderActionHandlerV2();
 
     protected GenerateBuilderActionV2() {
         super(generateBuilderActionHandler);

@@ -13,6 +13,33 @@ public final class BuilderConstant {
 
     public static final String METHOD_PREFIX = "with";
 
+    public static final class GenerateBuilder {
+
+        public static final String DIALOG_NAME = "GenerateBuilder";
+
+        public static final class PopupChooserTitle {
+
+            public static final String BUILDER_ALREADY_EXISTS = "Builder already exists";
+
+            public static final String BUILDER_NOT_FOUND = "Builder not found";
+        }
+
+    }
+
+    public static final class RegenerateBuilder {
+
+        public static final String DIALOG_NAME = "RegenerateBuilder";
+
+
+    }
+
+    public static final class GotoBuilder {
+
+        public static final String DIALOG_NAME = "GotoBuilder";
+
+
+    }
+
 
     public static final class RemoveBuilder {
 
