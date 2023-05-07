@@ -100,8 +100,8 @@
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
         </action>
-        <action id="com.peng.idea.plugin.builder.action.RemoveBuilderAction"
-                class="com.peng.idea.plugin.builder.action.RemoveBuilderAction"
+        <action id="com.peng.idea.plugin.builder.action.RemoveBuilderActionV2"
+                class="com.peng.idea.plugin.builder.action.RemoveBuilderActionV2"
                 text="Remove Builder Class" description="Remove builder class">
             <keyboard-shortcut keymap="$default" first-keystroke="control alt D"/>
         </action>

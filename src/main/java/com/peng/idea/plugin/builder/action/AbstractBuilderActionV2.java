@@ -2,10 +2,6 @@ package com.peng.idea.plugin.builder.action;
 
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.peng.idea.plugin.builder.action.handler.GoToBuilderActionHandler;
-import com.peng.idea.plugin.builder.action.handler.RemoveBuilderActionHandler;
-import com.peng.idea.plugin.builder.component.GoToBuilderPopupListComponent;
-import com.peng.idea.plugin.builder.gui.displayer.GoToBuilderPopupDisplayer;
 
 /**
  * <pre>

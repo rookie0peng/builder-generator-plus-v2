@@ -8,10 +8,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
-import com.peng.idea.plugin.builder.api.CreateBuilderDialogDO;
-import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
+import com.peng.idea.plugin.builder.api.GenerateBuilderDialogDO;
 import com.peng.idea.plugin.builder.gui.CreateBuilderDialog;
-import com.peng.idea.plugin.builder.gui.RemoveBuilderDialog;
 import com.peng.idea.plugin.builder.psi.PsiFieldSelector;
 import com.peng.idea.plugin.builder.psi.model.PsiFieldsForBuilder;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
@@ -33,7 +31,7 @@ import static com.peng.idea.plugin.builder.util.CollectionUtil.safeList;
 public class DisplayChooserUtil {
 
     @SuppressWarnings("rawtypes")
-    public static void run(CreateBuilderDialogDO chooserDO) {
+    public static void run(GenerateBuilderDialogDO chooserDO) {
         CreateBuilderDialog createBuilderDialog = showDialog(chooserDO);
         if (createBuilderDialog.isOK()) {
             boolean innerBuilder = createBuilderDialog.isInnerBuilder();
@@ -66,7 +64,7 @@ public class DisplayChooserUtil {
 //        }
 //    }
 
-    private static CreateBuilderDialog showDialog(CreateBuilderDialogDO chooserDO) {
+    private static CreateBuilderDialog showDialog(GenerateBuilderDialogDO chooserDO) {
         Editor editor = chooserDO.getEditor();
         Project project = chooserDO.getProject();
         PsiClass psiClassFromEditor = chooserDO.getEditorPsiClass();
@@ -93,7 +91,7 @@ public class DisplayChooserUtil {
 
     @SuppressWarnings("rawtypes")
     private static void writeBuilderIfNecessary(
-            MemberChooser<PsiElementClassMember> memberDialog, CreateBuilderDialog createDialog, CreateBuilderDialogDO chooserDO
+            MemberChooser<PsiElementClassMember> memberDialog, CreateBuilderDialog createDialog, GenerateBuilderDialogDO chooserDO
     ) {
         if (memberDialog.isOK()) {
             Project project = chooserDO.getProject();

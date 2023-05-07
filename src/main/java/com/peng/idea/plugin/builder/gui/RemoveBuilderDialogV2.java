@@ -1,24 +1,15 @@
 package com.peng.idea.plugin.builder.gui;
 
-import com.intellij.CommonBundle;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.util.IncorrectOperationException;
 import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.api.TripleComponentDO;
-import com.peng.idea.plugin.builder.util.BuildMethodFinderUtil;
 import com.peng.idea.plugin.builder.util.Pair;
 import com.peng.idea.plugin.builder.util.PanelUtil;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.dialog.GuiUtil;
-import com.peng.idea.plugin.builder.util.psi.GuiHelperUtil;
-import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -26,12 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.*;
-import static com.peng.idea.plugin.builder.util.CollectionUtil.*;
 
 /**
  * <pre>
@@ -40,9 +28,9 @@ import static com.peng.idea.plugin.builder.util.CollectionUtil.*;
  *  @date: 2023/4/8
  * </pre>
  */
-public class RemoveBuilderDialog extends DialogWrapper {
+public class RemoveBuilderDialogV2 extends DialogWrapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveBuilderDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveBuilderDialogV2.class);
 
     private final Project project;
 
@@ -52,7 +40,7 @@ public class RemoveBuilderDialog extends DialogWrapper {
 
     private List<TripleComponentDO> tripleComponents;
 
-    public RemoveBuilderDialog(@Nullable Project project, @Nullable RemoveBuilderDialogDO removeDO) {
+    public RemoveBuilderDialogV2(@Nullable Project project, @Nullable RemoveBuilderDialogDO removeDO) {
         super(project, true);
         this.project = project;
         this.removeDO = removeDO;

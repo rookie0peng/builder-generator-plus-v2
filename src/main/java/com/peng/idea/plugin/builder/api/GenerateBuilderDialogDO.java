@@ -15,7 +15,7 @@ import java.util.List;
  *  @date: 2023/4/16 11:37
  * </pre>
  */
-public class CreateBuilderDialogDO {
+public class GenerateBuilderDialogDO {
 
     /**
      * current project
@@ -133,14 +133,14 @@ public class CreateBuilderDialogDO {
             return this;
         }
 
-        public CreateBuilderDialogDO build() {
-            CreateBuilderDialogDO createBuilderDialogDO = new CreateBuilderDialogDO();
-            createBuilderDialogDO.setProject(project);
-            createBuilderDialogDO.setEditor(editor);
-            createBuilderDialogDO.setEditorPsiClass(psiClassFromEditor);
-            createBuilderDialogDO.setClassToOperate(classToOperate);
-            createBuilderDialogDO.setBuildMethodToOperates(buildMethodToOperates);
-            return createBuilderDialogDO;
+        public GenerateBuilderDialogDO build() {
+            GenerateBuilderDialogDO generateBuilderDialogDO = new GenerateBuilderDialogDO();
+            generateBuilderDialogDO.setProject(project);
+            generateBuilderDialogDO.setEditor(editor);
+            generateBuilderDialogDO.setEditorPsiClass(psiClassFromEditor);
+            generateBuilderDialogDO.setClassToOperate(classToOperate);
+            generateBuilderDialogDO.setBuildMethodToOperates(buildMethodToOperates);
+            return generateBuilderDialogDO;
         }
     }
 }
