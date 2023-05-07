@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.peng.idea.plugin.builder.util.BooleanUtil.nullToFalse;
 import static com.peng.idea.plugin.builder.util.CollectionUtil.safeCollection;
@@ -308,17 +309,6 @@ public class CreateBuilderDialog extends DialogWrapper {
         return myMainPanel;
     }
 
-    private void addInnerPanelForDestinationPackageField(JPanel panel, GridBagConstraints gbConstraints) {
-        JPanel innerPanel = createInnerPanelForDestinationPackageField();
-        panel.add(innerPanel, gbConstraints);
-    }
-
-    private JPanel createInnerPanelForDestinationPackageField() {
-        JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.add(targetPackageField, BorderLayout.CENTER);
-        return innerPanel;
-    }
-
     @Override
     protected void doOKAction() {
         registerEntry(RECENTS_KEY, targetPackageField.getText());
@@ -360,7 +350,8 @@ public class CreateBuilderDialog extends DialogWrapper {
 
     void checkIfClassCanBeCreated(Module module) {
         if (!isInnerBuilder()) {
-            SelectDirectory selectDirectory = new SelectDirectory(this, module, getPackageName(), getClassName(), existingBuilder);
+            Consumer<PsiDirectory> consumer = this::setTargetDirectory;
+            SelectDirectory selectDirectory = new SelectDirectory(consumer, module, getPackageName(), getClassName(), existingBuilder);
             executeCommand(selectDirectory);
         }
     }
@@ -468,205 +459,5 @@ public class CreateBuilderDialog extends DialogWrapper {
                 customTemplate.setEnabled(false);
             }
         };
-    }
-
-    private JPanel backup() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbConstraints = new GridBagConstraints();
-
-        panel.setBorder(IdeBorderFactory.createBorder());
-
-        // Preference
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 0;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Preference"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-
-        ButtonGroup preferenceGroup = new ButtonGroup();
-        JRadioButton defaultButton = new JRadioButton("Default", true);
-        defaultButton.setActionCommand("Default");// 设置name即为actionCommand
-        defaultButton.addActionListener(getPreferenceRadioListener(customTemplate));
-        preferenceGroup.add(defaultButton);
-        myDefault.add(defaultButton);
-        JRadioButton customButton = new JRadioButton("Custom", false);
-        customButton.setActionCommand("Custom");// 设置name即为actionCommand
-        customButton.addActionListener(getPreferenceRadioListener(customTemplate));
-        preferenceGroup.add(customButton);
-        myDefault.add(customButton);
-
-        panel.add(myDefault, gbConstraints);
-        // Preference
-
-        // Custom template
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 1;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Custom template"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-
-        customTemplate.addItem(BuilderTemplate.builder().id(UUIDUtil.randomUUID()).templateName("customTemplate 1").build());
-        customTemplate.addItem(BuilderTemplate.builder().id(UUIDUtil.randomUUID()).templateName("customTemplate 2").build());
-        customTemplate.addItem(BuilderTemplate.builder().id(UUIDUtil.randomUUID()).templateName("customTemplate 3").build());
-        customTemplate.setEnabled(false);
-        panel.add(customTemplate, gbConstraints);
-        // Custom template
-
-
-        // Class name
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 2;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Class name"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(targetClassNameField, gbConstraints);
-        targetClassNameField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(DocumentEvent e) {
-                getOKAction().setEnabled(PsiNameHelper.getInstance(project).isIdentifier(getClassName()));
-//                getOKAction().setEnabled(JavaPsiFacade.getInstance(project).getNameHelper().isIdentifier(getClassName()));
-            }
-        });
-        // Class name
-
-        // Method prefix
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 3;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Method prefix"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(targetMethodPrefix, gbConstraints);
-        // Method prefix
-
-        // Destination package
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 4;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridwidth = 1;
-        panel.add(new JLabel(CodeInsightBundle.message("action.flatten.packages")), gbConstraints);
-
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-
-        AnAction clickAction = new AnAction() {
-            @Override
-            public void actionPerformed(AnActionEvent e) {
-                targetPackageField.setButtonVisible(true);
-//                targetPackageField.getButton().doClick();
-            }
-        };
-        clickAction.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK)),
-                targetPackageField.getChildComponent());
-
-        addInnerPanelForDestinationPackageField(panel, gbConstraints);
-        // Destination package
-
-        // Inner builder
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridy = 5;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Inner builder"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-
-        innerBuilder = new JCheckBox();
-        innerBuilder.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                targetPackageField.setEnabled(!innerBuilder.isSelected());
-            }
-        });
-        panel.add(innerBuilder, gbConstraints);
-        // Inner builder
-
-
-        // but method
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridy = 6;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("'but' method"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        butMethod = new JCheckBox();
-        panel.add(butMethod, gbConstraints);
-        // but method
-
-
-        // useSingleField
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 0;
-        gbConstraints.weightx = 0;
-        gbConstraints.gridy = 7;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        panel.add(new JLabel("Use single field"), gbConstraints);
-
-        gbConstraints.insets = new Insets(4, 8, 4, 8);
-        gbConstraints.gridx = 1;
-        gbConstraints.weightx = 1;
-        gbConstraints.gridwidth = 1;
-        gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gbConstraints.anchor = GridBagConstraints.WEST;
-        useSingleField = new JCheckBox();
-        panel.add(useSingleField, gbConstraints);
-        // useSingleField
-
-        return panel;
     }
 }

@@ -6,6 +6,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 
+import java.util.function.Consumer;
+
 /**
  * <pre>
  *  @description:
@@ -15,17 +17,19 @@ import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
  */
 public class SelectDirectory implements Runnable {
 
-    private final CreateBuilderDialog createBuilderDialog;
+//    private final CreateBuilderDialog createBuilderDialog;
+    private final Consumer<PsiDirectory> consumer;
     private final Module module;
     private final String packageName;
     private final String className;
     private final PsiClass existingBuilder;
 
     public SelectDirectory(
-            CreateBuilderDialog createBuilderDialog, Module module, String packageName,
+            Consumer<PsiDirectory> consumer, Module module, String packageName,
             String className, PsiClass existingBuilder
     ) {
-        this.createBuilderDialog = createBuilderDialog;
+//        this.createBuilderDialog = createBuilderDialog;
+        this.consumer = consumer;
         this.module = module;
         this.packageName = packageName;
         this.className = className;
@@ -37,7 +41,8 @@ public class SelectDirectory implements Runnable {
         PsiDirectory targetDirectory = PsiClassUtil.getDirectoryFromModuleAndPackageName(module, packageName);
         if (targetDirectory != null) {
             throwExceptionIfClassCannotBeCreated(targetDirectory);
-            createBuilderDialog.setTargetDirectory(targetDirectory);
+//            createBuilderDialog.setTargetDirectory(targetDirectory);
+            consumer.accept(targetDirectory);
         }
     }
 
