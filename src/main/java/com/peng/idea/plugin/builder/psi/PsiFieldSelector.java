@@ -56,6 +56,11 @@ public class PsiFieldSelector {
 //        return !psiField.hasModifier(JvmModifier.FINAL);
 //    }
 
+    @SuppressWarnings("rawtypes")
+    public static List<PsiElementClassMember> getFieldsToIncludeInBuilder(PsiClass clazz, boolean innerBuilder, boolean useSingleField, boolean hasButMethod) {
+        return PsiFieldSelector.selectFieldsToIncludeInBuilder(clazz, innerBuilder, useSingleField, hasButMethod);
+    }
+
     /**
      * get optional field member
      * @return optional field member

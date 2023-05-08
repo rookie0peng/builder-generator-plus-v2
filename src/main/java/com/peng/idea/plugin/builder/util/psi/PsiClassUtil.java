@@ -116,6 +116,11 @@ public class PsiClassUtil {
         return getJavaDirectoryService().getPackage(psiDirectory);
     }
 
+    public static PsiPackage getPackage(Project project, Editor editor) {
+        PsiDirectory srcDir = PsiClassUtil.getPsiFileFromEditor(editor, project).getContainingDirectory();
+        return PsiClassUtil.getPackage(srcDir);
+    }
+
     public static JavaPsiFacade getJavaPsiFacade(Project project) {
         return JavaPsiFacade.getInstance(project);
     }

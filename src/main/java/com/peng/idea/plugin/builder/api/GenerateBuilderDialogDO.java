@@ -35,16 +35,19 @@ public class GenerateBuilderDialogDO {
     private PsiPackage editorPackage;
 
     /**
+     * source PSI class of editor PSI class
+     */
+    private PsiClass srcPsiClass;
+
+    /**
      * PSI class of editor
      */
     private PsiClass editorPsiClass;
 
     /**
-     * class
+     * destination PSI class of editor PSI class
      */
-    private PsiClass classToOperate;
-
-    private List<PsiMethod> buildMethodToOperates;
+    private PsiClass dstPsiClass;
 
     public static GenerateBuilderDialogDOBuilder builder() {
         return GenerateBuilderDialogDOBuilder.aGenerateBuilderDialogDO();
@@ -54,7 +57,7 @@ public class GenerateBuilderDialogDO {
         return project;
     }
 
-    public void setProject(@NotNull Project project) {
+    public void setProject(Project project) {
         this.project = project;
     }
 
@@ -62,7 +65,7 @@ public class GenerateBuilderDialogDO {
         return editor;
     }
 
-    public void setEditor(@NotNull Editor editor) {
+    public void setEditor(Editor editor) {
         this.editor = editor;
     }
 
@@ -74,6 +77,14 @@ public class GenerateBuilderDialogDO {
         this.editorPackage = editorPackage;
     }
 
+    public PsiClass getSrcPsiClass() {
+        return srcPsiClass;
+    }
+
+    public void setSrcPsiClass(PsiClass srcPsiClass) {
+        this.srcPsiClass = srcPsiClass;
+    }
+
     public PsiClass getEditorPsiClass() {
         return editorPsiClass;
     }
@@ -82,41 +93,33 @@ public class GenerateBuilderDialogDO {
         this.editorPsiClass = editorPsiClass;
     }
 
-    public PsiClass getClassToOperate() {
-        return classToOperate;
+    public PsiClass getDstPsiClass() {
+        return dstPsiClass;
     }
 
-    public void setClassToOperate(PsiClass classToOperate) {
-        this.classToOperate = classToOperate;
-    }
-
-    public List<PsiMethod> getBuildMethodToOperates() {
-        return buildMethodToOperates;
-    }
-
-    public void setBuildMethodToOperates(List<PsiMethod> buildMethodToOperates) {
-        this.buildMethodToOperates = buildMethodToOperates;
+    public void setDstPsiClass(PsiClass dstPsiClass) {
+        this.dstPsiClass = dstPsiClass;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", GenerateBuilderDialogDO.class.getSimpleName() + "[", "]")
-                .add("project=" + project)
-                .add("editor=" + editor)
-                .add("editorPackage=" + editorPackage)
-                .add("editorPsiClass=" + editorPsiClass)
-                .add("classToOperate=" + classToOperate)
-                .add("buildMethodToOperates=" + buildMethodToOperates)
-                .toString();
+        return "GenerateBuilderDialogDO{" +
+                "project=" + project +
+                ", editor=" + editor +
+                ", editorPackage=" + editorPackage +
+                ", srcPsiClass=" + srcPsiClass +
+                ", editorPsiClass=" + editorPsiClass +
+                ", dstPsiClass=" + dstPsiClass +
+                '}';
     }
 
     public static final class GenerateBuilderDialogDOBuilder {
         private Project project;
         private Editor editor;
         private PsiPackage editorPackage;
+        private PsiClass srcPsiClass;
         private PsiClass editorPsiClass;
-        private PsiClass classToOperate;
-        private List<PsiMethod> buildMethodToOperates;
+        private PsiClass dstPsiClass;
 
         private GenerateBuilderDialogDOBuilder() {
         }
@@ -140,18 +143,18 @@ public class GenerateBuilderDialogDO {
             return this;
         }
 
+        public GenerateBuilderDialogDOBuilder srcPsiClass(PsiClass srcPsiClass) {
+            this.srcPsiClass = srcPsiClass;
+            return this;
+        }
+
         public GenerateBuilderDialogDOBuilder editorPsiClass(PsiClass editorPsiClass) {
             this.editorPsiClass = editorPsiClass;
             return this;
         }
 
-        public GenerateBuilderDialogDOBuilder classToOperate(PsiClass classToOperate) {
-            this.classToOperate = classToOperate;
-            return this;
-        }
-
-        public GenerateBuilderDialogDOBuilder buildMethodToOperates(List<PsiMethod> buildMethodToOperates) {
-            this.buildMethodToOperates = buildMethodToOperates;
+        public GenerateBuilderDialogDOBuilder dstPsiClass(PsiClass dstPsiClass) {
+            this.dstPsiClass = dstPsiClass;
             return this;
         }
 
@@ -160,9 +163,9 @@ public class GenerateBuilderDialogDO {
             generateBuilderDialogDO.setProject(project);
             generateBuilderDialogDO.setEditor(editor);
             generateBuilderDialogDO.setEditorPackage(editorPackage);
+            generateBuilderDialogDO.setSrcPsiClass(srcPsiClass);
             generateBuilderDialogDO.setEditorPsiClass(editorPsiClass);
-            generateBuilderDialogDO.setClassToOperate(classToOperate);
-            generateBuilderDialogDO.setBuildMethodToOperates(buildMethodToOperates);
+            generateBuilderDialogDO.setDstPsiClass(dstPsiClass);
             return generateBuilderDialogDO;
         }
     }

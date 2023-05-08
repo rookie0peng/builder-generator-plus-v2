@@ -106,6 +106,12 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         super.show();
     }
 
+    @NotNull
+    @Override
+    protected Action[] createActions() {
+        return new Action[]{getOKAction(), getCancelAction(), getHelpAction()};
+    }
+
     @Override
     protected @Nullable JComponent createCenterPanel() {
         LOGGER.info("builderSettings: {}", GsonUtil.GSON.toJson(builderSettings));

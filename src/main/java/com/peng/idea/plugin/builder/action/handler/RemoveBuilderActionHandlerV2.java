@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.peng.idea.plugin.builder.api.BuilderActionCommonDO;
 import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.gui.RemoveBuilderDialogV2;
-import com.peng.idea.plugin.builder.util.BuildMethodFinderUtil;
+import com.peng.idea.plugin.builder.util.BuilderMethodFinderUtil;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.psi.BuilderFinderUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderVerifierUtil;
@@ -79,13 +79,13 @@ public class RemoveBuilderActionHandlerV2 extends AbstractBuilderActionHandlerV2
                 switch (component.getKey()) {
                     case BuilderConstant.RemoveBuilder.DialogComponentKey.EDITOR_PSI_CLASS -> {
                         Optional.ofNullable(removeDO.getSrcPsiClass())
-                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+                                .map(BuilderMethodFinderUtil::findBuilderMethodV2)
                                 .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
                         Optional.ofNullable(removeDO.getEditorPsiClass()).ifPresent(PsiElement::delete);
                     }
                     case BuilderConstant.RemoveBuilder.DialogComponentKey.DST_PSI_CLASS -> {
                         Optional.ofNullable(removeDO.getEditorPsiClass())
-                                .map(BuildMethodFinderUtil::findBuilderMethodV2)
+                                .map(BuilderMethodFinderUtil::findBuilderMethodV2)
                                 .ifPresent(psiMethods -> psiMethods.forEach(PsiElement::delete));
                         Optional.ofNullable(removeDO.getDstPsiClass()).ifPresent(PsiElement::delete);
                     }

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.peng.idea.plugin.builder.component.AbstractPopupListComponent;
 import com.peng.idea.plugin.builder.gui.displayer.AbstractPopupDisplayer;
-import com.peng.idea.plugin.builder.util.BuildMethodFinderUtil;
+import com.peng.idea.plugin.builder.util.BuilderMethodFinderUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderFinderUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderVerifierUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
@@ -81,7 +81,7 @@ public abstract class AbstractBuilderActionHandler extends EditorActionHandler {
     private List<PsiMethod> findBuilderMethod(PsiClass dstPsiClass) {
         if (dstPsiClass == null)
             return List.of();
-        return BuildMethodFinderUtil.findBuilderMethodV2(dstPsiClass);
+        return BuilderMethodFinderUtil.findBuilderMethodV2(dstPsiClass);
     }
 
     protected abstract void doActionWhenClassToGoIsFound(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext, boolean isBuilder, PsiClass classToGo, List<PsiMethod> buildMethods);

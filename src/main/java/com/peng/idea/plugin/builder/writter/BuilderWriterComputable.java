@@ -40,7 +40,7 @@ public class BuilderWriterComputable implements Computable<PsiElement> {
 
     private final List<PsiMethod> existingBuildMethods;
 
-    BuilderWriterComputable(BuilderContext context, PsiClass existingBuilder, List<PsiMethod> existingBuildMethods) {
+    public BuilderWriterComputable(BuilderContext context, PsiClass existingBuilder, List<PsiMethod> existingBuildMethods) {
         this.context = context;
         this.existingBuilder = existingBuilder;
         this.existingBuildMethods = existingBuildMethods;

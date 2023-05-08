@@ -4,7 +4,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
  *  @date: 2023/1/20 17:02
  * </pre>
  */
-public class BuildMethodFinderUtil {
+public class BuilderMethodFinderUtil {
 
     private static final String METHOD_NAME = "builder";
 
