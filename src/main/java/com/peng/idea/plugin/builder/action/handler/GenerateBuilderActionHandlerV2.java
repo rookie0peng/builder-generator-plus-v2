@@ -1,39 +1,39 @@
 package com.peng.idea.plugin.builder.action.handler;
 
 import com.intellij.codeInsight.generation.PsiElementClassMember;
+import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
 import com.intellij.ui.components.JBList;
+import com.peng.idea.plugin.builder.action.GoToBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.RegenerateBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.RemoveBuilderAdditionalAction;
+import com.peng.idea.plugin.builder.action.additional.*;
 import com.peng.idea.plugin.builder.api.BuilderActionCommonDO;
 import com.peng.idea.plugin.builder.api.GenerateBuilderDialogDO;
-import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
 import com.peng.idea.plugin.builder.gui.GenerateBuilderDialogV2;
-import com.peng.idea.plugin.builder.gui.RemoveBuilderDialogV2;
 import com.peng.idea.plugin.builder.psi.PsiFieldSelector;
 import com.peng.idea.plugin.builder.psi.model.PsiFieldsForBuilder;
+import com.peng.idea.plugin.builder.rendener.ActionCellRenderer;
 import com.peng.idea.plugin.builder.util.BuilderMethodFinderUtil;
+import com.peng.idea.plugin.builder.util.Pair;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.dialog.MemberChooserDialogUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderFinderUtil;
 import com.peng.idea.plugin.builder.util.psi.BuilderVerifierUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiFieldsForBuilderUtil;
-import com.peng.idea.plugin.builder.util.verifier.PsiFieldVerifierUtil;
 import com.peng.idea.plugin.builder.writter.BuilderContext;
 import com.peng.idea.plugin.builder.writter.BuilderWriter;
-import com.peng.idea.plugin.builder.writter.BuilderWriterComputable;
-import com.peng.idea.plugin.builder.writter.BuilderWriterRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -63,15 +63,15 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
 
     private static final String BUILDER_NOT_FOUND = BuilderConstant.GenerateBuilder.PopupChooserTitle.BUILDER_NOT_FOUND;
 
-    private static final Map<Boolean, List<String>> EXISTS_BUILDER_TO_DIALOG_NAME_MAP = Map.of(
+    private static final Map<Boolean, List<GotoTargetHandler.AdditionalAction>> EXISTS_BUILDER_TO_DIALOG_NAME_MAP = Map.of(
             true, List.of(
-                    BuilderConstant.RegenerateBuilder.DIALOG_NAME,
-                    BuilderConstant.GotoBuilder.DIALOG_NAME,
-                    BuilderConstant.GenerateBuilder.DIALOG_NAME,
-                    BuilderConstant.RemoveBuilder.DIALOG_NAME
+                    RegenerateBuilderAdditionalActionV2.INSTANCE,
+                    JumpToBuilderAdditionalActionV2.INSTANCE,
+                    GenerateBuilderAdditionalActionV2.INSTANCE,
+                    RemoveBuilderAdditionalActionV2.INSTANCE
             ),
             false, List.of(
-                    BuilderConstant.GenerateBuilder.DIALOG_NAME
+                    GenerateBuilderAdditionalActionV2.INSTANCE
             )
     );
 
@@ -99,11 +99,12 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
 //            return;
 //        }
         PsiPackage psiPackage = PsiClassUtil.getPackage(commonDO.getProject(), commonDO.getEditor());
-
+        Pair<PsiClass, PsiClass> pair = getPossibleSrcClassAndBuilderClass(commonDO);
         GenerateBuilderDialogDO generateDO = GenerateBuilderDialogDO.builder()
                 .project(commonDO.getProject()).editor(commonDO.getEditor()).editorPackage(psiPackage)
                 .srcPsiClass(commonDO.getSrcPsiClass()).editorPsiClass(commonDO.getEditorPsiClass())
                 .dstPsiClass(commonDO.getDstPsiClass())
+                .possibleSrcPsiClass(pair.getFirst()).possibleBuilderPsiClass(pair.getSecond())
                 .build();
         GenerateBuilderDialogV2 generateBuilderDialogV2 = new GenerateBuilderDialogV2(commonDO.getProject(), generateDO);
         generateBuilderDialogV2.show();
@@ -115,37 +116,44 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
             boolean useSingleField = generateBuilderDialogV2.useSingleField();
             boolean hasButMethod = generateBuilderDialogV2.hasButMethod();
             List<PsiElementClassMember> fieldsToDisplay = PsiFieldSelector.getFieldsToIncludeInBuilder(
-                    generateDO.getDstPsiClass(), innerBuilder, useSingleField, hasButMethod
+                    generateDO.getPossibleSrcPsiClass(), innerBuilder, useSingleField, hasButMethod
             );
             MemberChooser<PsiElementClassMember> memberChooserDialog = MemberChooserDialogUtil.getMemberChooserDialog(
                     fieldsToDisplay, generateDO.getProject()
             );
             memberChooserDialog.show();
             if (memberChooserDialog.isOK()) {
-                List<PsiMethod> builderMethods = BuilderMethodFinderUtil.findBuilderMethodV2(generateDO.getEditorPsiClass());
+                List<PsiMethod> builderMethods = BuilderMethodFinderUtil.findBuilderMethodV2(generateDO.getPossibleSrcPsiClass());
 
                 List<PsiElementClassMember> selectedElements = safeList(memberChooserDialog.getSelectedElements());
-                PsiFieldsForBuilder psiFieldsForBuilder = PsiFieldsForBuilderUtil.createPsiFieldsForBuilder(selectedElements, generateDO.getEditorPsiClass());
+                PsiFieldsForBuilder psiFieldsForBuilder = PsiFieldsForBuilderUtil.createPsiFieldsForBuilder(selectedElements, generateDO.getPossibleSrcPsiClass());
                 BuilderContext context = new BuilderContext(
-                        generateDO.getProject(), psiFieldsForBuilder, targetDirectory, className, generateDO.getEditorPsiClass(), methodPrefix, innerBuilder, hasButMethod, useSingleField);
-                Application application = PsiClassUtil.getApplication();
-                application.runWriteAction(new BuilderWriterComputable(context, generateDO.getDstPsiClass(), builderMethods));
+                        generateDO.getProject(), psiFieldsForBuilder, targetDirectory, className, generateDO.getPossibleSrcPsiClass(), methodPrefix, innerBuilder, hasButMethod, useSingleField);
+//                Application application = PsiClassUtil.getApplication();
+//                application.runWriteAction(() -> {new BuilderWriterComputable(context, generateDO.getPossibleBuilderPsiClass(), builderMethods);});
+                BuilderWriter.writeBuilder(context, generateDO.getPossibleBuilderPsiClass(), builderMethods);
 //                BuilderWriter.writeBuilder(context, existingBuilder, existingBuildMethods);
             }
         }
     }
 
     public void beforeRun(BuilderActionCommonDO commonDO) {
-        boolean existsBuilder = BuilderVerifierUtil.isBuilder(commonDO.getEditorPsiClass())
+        boolean existsBuilder = (nonNull(commonDO.getSrcPsiClass()) && BuilderVerifierUtil.isBuilder(commonDO.getEditorPsiClass()))
                 || BuilderVerifierUtil.isBuilder(commonDO.getDstPsiClass());
-        List<String> popupChoosers = EXISTS_BUILDER_TO_DIALOG_NAME_MAP.get(existsBuilder);
-
-        JList<String> jList = new JBList<>(popupChoosers);
+        List<GotoTargetHandler.AdditionalAction> popupChoosers = EXISTS_BUILDER_TO_DIALOG_NAME_MAP.get(existsBuilder);
+        new JBList<>(List.of(
+                RegenerateBuilderAdditionalAction.INSTANCE,
+                GoToBuilderAdditionalAction.INSTANCE,
+                RemoveBuilderAdditionalAction.INSTANCE
+        ));
+        JList<GotoTargetHandler.AdditionalAction> jList = new JBList<>(popupChoosers);
+        jList.setCellRenderer(ActionCellRenderer.INSTANCE);
 
         Runnable runnable = () -> {
-            String selectedValue = jList.getSelectedValue();
-            AbstractBuilderActionHandlerV2 handlerV2 = BuilderActionHandlerFactory.DIALOG_NAME_TO_HANDLE_MAP.get(selectedValue);
-            handlerV2.run(commonDO);
+            GotoTargetHandler.AdditionalAction selectedValue = jList.getSelectedValue();
+            AbstractBuilderActionHandlerV2 handlerV2 = BuilderActionHandlerFactory.DIALOG_NAME_TO_HANDLE_MAP.get(selectedValue.getText());
+            if (nonNull(handlerV2))
+                handlerV2.run(commonDO);
         };
 
         PopupChooserBuilder<?> builder = new PopupChooserBuilder<>(jList);
@@ -153,5 +161,15 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
                 setItemChoosenCallback(runnable).
                 setMovable(true).
                 createPopup().showInBestPositionFor(commonDO.getEditor());
+    }
+
+    private Pair<PsiClass, PsiClass> getPossibleSrcClassAndBuilderClass(BuilderActionCommonDO commonDO) {
+        if (nonNull(commonDO.getSrcPsiClass()) && BuilderVerifierUtil.isBuilder(commonDO.getEditorPsiClass())) {
+            return Pair.of(commonDO.getSrcPsiClass(), commonDO.getEditorPsiClass());
+        } else if (BuilderVerifierUtil.isBuilder(commonDO.getDstPsiClass())) {
+            return Pair.of(commonDO.getEditorPsiClass(), commonDO.getDstPsiClass());
+        } else {
+            return Pair.of(commonDO.getEditorPsiClass(), null);
+        }
     }
 }

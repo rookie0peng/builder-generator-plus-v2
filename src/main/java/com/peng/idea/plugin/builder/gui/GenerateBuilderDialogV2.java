@@ -91,7 +91,7 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         this.generateDO = generateDO;
         this.builderSettings = BuilderSettingsManager.getInstance().getSettings();
         this.builderTemplates = safeList(BuilderTemplateManager.getInstance().getTemplates());
-        internalBuilderTemplate.setClassName(generateDO.getEditorPsiClass().getName() + BuilderConstant.BUILDER_SUFFIX);
+        internalBuilderTemplate.setClassName(generateDO.getPossibleSrcPsiClass().getName() + BuilderConstant.BUILDER_SUFFIX);
         internalBuilderTemplate.setMethodPrefix(BuilderConstant.METHOD_PREFIX);
         this.targetPackageField = new ReferenceEditorComboWithBrowseButton(
                 null, generateDO.getEditorPackage().getQualifiedName(), project, true, RECENTS_KEY
@@ -128,9 +128,9 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
     @Override
     protected void doOKAction() {
         registerEntry(RECENTS_KEY, targetPackageField.getText());
-        Module module = PsiClassUtil.findModuleForPsiClass(generateDO.getEditorPsiClass(), project);
+        Module module = PsiClassUtil.findModuleForPsiClass(generateDO.getPossibleSrcPsiClass(), project);
         if (module == null) {
-            throw new IllegalStateException("Cannot find module for class " + generateDO.getEditorPsiClass().getName());
+            throw new IllegalStateException("Cannot find module for class " + generateDO.getPossibleSrcPsiClass().getName());
         }
         try {
             checkIfSourceClassHasZeroArgsConstructorWhenUsingSingleField();
@@ -352,13 +352,13 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         className = isEmpty(className) ? internalBuilderTemplate.getClassName() : className
                 .replace(Constants.Template.INTERNAL_CLASS_NAME, nullToEmpty(internalBuilderTemplate.getClassName()))
                 .replace(Constants.Template.SRC_CLASS_NAME,
-                        safeObject(generateDO.getEditorPsiClass()).map(PsiClass::getName).orElse(""));
+                        safeObject(generateDO.getPossibleSrcPsiClass()).map(PsiClass::getName).orElse(""));
         return className;
     }
 
     private void checkIfSourceClassHasZeroArgsConstructorWhenUsingSingleField() {
         if (useSingleField()) {
-            PsiClass editorPsiClass = generateDO.getEditorPsiClass();
+            PsiClass editorPsiClass = generateDO.getPossibleSrcPsiClass();
             PsiMethod[] constructors = editorPsiClass.getConstructors();
             if(constructors.length == 0){
                 return;
@@ -377,7 +377,7 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
     private void checkIfClassCanBeCreated(Module module) {
         if (!isInnerBuilder()) {
             Consumer<PsiDirectory> consumer = this::setTargetDirectory;
-            SelectDirectory selectDirectory = new SelectDirectory(consumer, module, getPackageName(), getClassName(), generateDO.getEditorPsiClass());
+            SelectDirectory selectDirectory = new SelectDirectory(consumer, module, getPackageName(), getClassName(), generateDO.getPossibleSrcPsiClass());
             executeCommand(selectDirectory);
         }
     }

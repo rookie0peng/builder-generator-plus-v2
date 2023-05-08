@@ -49,6 +49,16 @@ public class GenerateBuilderDialogDO {
      */
     private PsiClass dstPsiClass;
 
+    /**
+     * possible src PSI class of editor PSI class
+     */
+    private PsiClass possibleSrcPsiClass;
+
+    /**
+     * possible builder PSI class of editor PSI class
+     */
+    private PsiClass possibleBuilderPsiClass;
+
     public static GenerateBuilderDialogDOBuilder builder() {
         return GenerateBuilderDialogDOBuilder.aGenerateBuilderDialogDO();
     }
@@ -101,16 +111,34 @@ public class GenerateBuilderDialogDO {
         this.dstPsiClass = dstPsiClass;
     }
 
+    public PsiClass getPossibleSrcPsiClass() {
+        return possibleSrcPsiClass;
+    }
+
+    public void setPossibleSrcPsiClass(PsiClass possibleSrcPsiClass) {
+        this.possibleSrcPsiClass = possibleSrcPsiClass;
+    }
+
+    public PsiClass getPossibleBuilderPsiClass() {
+        return possibleBuilderPsiClass;
+    }
+
+    public void setPossibleBuilderPsiClass(PsiClass possibleBuilderPsiClass) {
+        this.possibleBuilderPsiClass = possibleBuilderPsiClass;
+    }
+
     @Override
     public String toString() {
-        return "GenerateBuilderDialogDO{" +
-                "project=" + project +
-                ", editor=" + editor +
-                ", editorPackage=" + editorPackage +
-                ", srcPsiClass=" + srcPsiClass +
-                ", editorPsiClass=" + editorPsiClass +
-                ", dstPsiClass=" + dstPsiClass +
-                '}';
+        return new StringJoiner(", ", GenerateBuilderDialogDO.class.getSimpleName() + "[", "]")
+                .add("project=" + project)
+                .add("editor=" + editor)
+                .add("editorPackage=" + editorPackage)
+                .add("srcPsiClass=" + srcPsiClass)
+                .add("editorPsiClass=" + editorPsiClass)
+                .add("dstPsiClass=" + dstPsiClass)
+                .add("possibleSrcPsiClass=" + possibleSrcPsiClass)
+                .add("possibleBuilderPsiClass=" + possibleBuilderPsiClass)
+                .toString();
     }
 
     public static final class GenerateBuilderDialogDOBuilder {
@@ -120,6 +148,8 @@ public class GenerateBuilderDialogDO {
         private PsiClass srcPsiClass;
         private PsiClass editorPsiClass;
         private PsiClass dstPsiClass;
+        private PsiClass possibleSrcPsiClass;
+        private PsiClass possibleBuilderPsiClass;
 
         private GenerateBuilderDialogDOBuilder() {
         }
@@ -158,6 +188,16 @@ public class GenerateBuilderDialogDO {
             return this;
         }
 
+        public GenerateBuilderDialogDOBuilder possibleSrcPsiClass(PsiClass possibleSrcPsiClass) {
+            this.possibleSrcPsiClass = possibleSrcPsiClass;
+            return this;
+        }
+
+        public GenerateBuilderDialogDOBuilder possibleBuilderPsiClass(PsiClass possibleBuilderPsiClass) {
+            this.possibleBuilderPsiClass = possibleBuilderPsiClass;
+            return this;
+        }
+
         public GenerateBuilderDialogDO build() {
             GenerateBuilderDialogDO generateBuilderDialogDO = new GenerateBuilderDialogDO();
             generateBuilderDialogDO.setProject(project);
@@ -166,6 +206,8 @@ public class GenerateBuilderDialogDO {
             generateBuilderDialogDO.setSrcPsiClass(srcPsiClass);
             generateBuilderDialogDO.setEditorPsiClass(editorPsiClass);
             generateBuilderDialogDO.setDstPsiClass(dstPsiClass);
+            generateBuilderDialogDO.setPossibleSrcPsiClass(possibleSrcPsiClass);
+            generateBuilderDialogDO.setPossibleBuilderPsiClass(possibleBuilderPsiClass);
             return generateBuilderDialogDO;
         }
     }

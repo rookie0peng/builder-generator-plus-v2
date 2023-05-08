@@ -14,9 +14,9 @@ import java.util.Map;
 public class BuilderActionHandlerFactory {
 
     public static final Map<String, AbstractBuilderActionHandlerV2> DIALOG_NAME_TO_HANDLE_MAP = Map.of(
-            BuilderConstant.RegenerateBuilder.DIALOG_NAME, RegenerateBuilderActionHandlerV2.INSTANCE,
-            BuilderConstant.GotoBuilder.DIALOG_NAME, GoToBuilderActionHandlerV2.INSTANCE,
-            BuilderConstant.GenerateBuilder.DIALOG_NAME, GenerateBuilderActionHandlerV2.INSTANCE,
-            BuilderConstant.RemoveBuilder.DIALOG_NAME, RemoveBuilderActionHandlerV2.INSTANCE
+            BuilderConstant.RegenerateBuilder.POPUP_NAME, RegenerateBuilderActionHandlerV2.INSTANCE,
+            BuilderConstant.JumpToBuilder.POPUP_NAME, JumpToBuilderActionHandlerV2.INSTANCE,
+            BuilderConstant.GenerateBuilder.POPUP_NAME, GenerateBuilderActionHandlerV2.INSTANCE,
+            BuilderConstant.RemoveBuilder.POPUP_NAME, RemoveBuilderActionHandlerV2.INSTANCE
     );
 }

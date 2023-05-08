@@ -2,9 +2,12 @@ package com.peng.idea.plugin.builder.util.psi;
 
 import com.intellij.lang.jvm.JvmMethod;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Objects.*;
 
@@ -44,11 +47,38 @@ public class BuilderFinderUtil {
         return innerBuilderClass;
     }
 
+    /**
+     * todo need to find inner class Builder
+     * @param psiClass
+     * @return
+     */
     public static PsiClass findClassForBuilder(PsiClass psiClass) {
         if (isNull(psiClass))
             return null;
-        String searchName = Objects.requireNonNull(psiClass.getName()).replaceFirst(SEARCH_PATTERN, EMPTY_STRING);
-        return findClass(psiClass, searchName);
+        String className = Optional.ofNullable(psiClass.getName()).orElse("");
+        if (Objects.equals(className, SEARCH_PATTERN)) {
+            PsiElement parentPsiElement = psiClass.getParent();
+            if (parentPsiElement instanceof PsiClass parentPsiClass) {
+                return parentPsiClass;
+            } else {
+                return findClassByBuildMethod(psiClass);
+            }
+        } else {
+            if (!className.contains(SEARCH_PATTERN)) {
+                return null;
+            }
+            String searchName = className.replaceFirst(SEARCH_PATTERN, EMPTY_STRING);
+            return findClass(psiClass, searchName);
+        }
+    }
+
+    public static PsiClass findClassByBuildMethod(PsiClass psiClass) {
+        return Stream.of(psiClass.getMethods())
+                .filter(psiMethod -> "build".equals(psiMethod.getName()))
+                .map(PsiMethod::getReturnType)
+                .filter(psiType -> psiType instanceof PsiClass)
+                .map(PsiClass.class::cast)
+                .findAny().orElse(null);
     }
 
     public static PsiClass findClass(PsiClass psiClass, String searchName) {

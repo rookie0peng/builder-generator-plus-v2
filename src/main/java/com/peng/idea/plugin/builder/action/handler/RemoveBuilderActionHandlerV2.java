@@ -3,6 +3,7 @@ package com.peng.idea.plugin.builder.action.handler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.Application;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -91,10 +92,10 @@ public class RemoveBuilderActionHandlerV2 extends AbstractBuilderActionHandlerV2
                     }
                 }
             });
+            CommandProcessor commandProcessor = PsiClassUtil.getCommandProcessor();
             Application application = PsiClassUtil.getApplication();
-            application.runWriteAction(runnable);
+            commandProcessor.executeCommand(commonDO.getProject(), () -> {application.runWriteAction(runnable);}, "Remove Builder Command", null);
         }
-        super.run(commonDO);
     }
 
     //    private void forwardToSpecificAction(Editor editor, PsiClass psiClassFromEditor, DataContext dataContext) {

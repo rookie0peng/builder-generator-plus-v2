@@ -1,5 +1,10 @@
 package com.peng.idea.plugin.builder.util.constant;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.*;
+
 /**
  * <pre>
  *  @description:
@@ -17,6 +22,10 @@ public final class BuilderConstant {
 
         public static final String DIALOG_NAME = "GenerateBuilder";
 
+        public static final String POPUP_NAME = "Generate builder...";
+
+        public static final Icon ICON = IconLoader.getIcon("/actions/addFile.svg", AllIcons.class);
+
         public static final class PopupChooserTitle {
 
             public static final String BUILDER_ALREADY_EXISTS = "Builder already exists";
@@ -30,12 +39,19 @@ public final class BuilderConstant {
 
         public static final String DIALOG_NAME = "RegenerateBuilder";
 
+        public static final String POPUP_NAME = "Regenerate builder...";
+
+        public static final Icon ICON = IconLoader.getIcon("/actions/addFile_dark.svg", AllIcons.class);
 
     }
 
-    public static final class GotoBuilder {
+    public static final class JumpToBuilder {
 
-        public static final String DIALOG_NAME = "GotoBuilder";
+        public static final String DIALOG_NAME = "JumpToBuilder";
+
+        public static final String POPUP_NAME = "Jump to builder...";
+
+        public static final Icon ICON = IconLoader.getIcon("/actions/find.svg", AllIcons.class);
 
 
     }
@@ -44,6 +60,10 @@ public final class BuilderConstant {
     public static final class RemoveBuilder {
 
         public static final String DIALOG_NAME = "RemoveBuilder";
+
+        public static final String POPUP_NAME = "Remove builder...";
+
+        public static final Icon ICON = IconLoader.getIcon("/actions/deleteTag.svg", AllIcons.class);
 
         public static final class DialogComponentKey {
 
