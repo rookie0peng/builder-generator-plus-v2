@@ -116,6 +116,12 @@
                 text="Builder Generator Plus" description="Generates/regenerates builder">
             <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
         </action>
+        <action id="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
+                class="com.peng.idea.plugin.builder.action.GenerateBuilderActionV2"
+                text="Builder Generator Plus V2" description="Generates/regenerates builder">
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt I"/>
+            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals"/>
+        </action>
 
     </actions>
 
