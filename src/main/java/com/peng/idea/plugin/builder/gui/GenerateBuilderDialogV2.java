@@ -21,8 +21,6 @@ import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.IncorrectOperationException;
 import com.peng.idea.plugin.builder.api.GenerateBuilderDialogDO;
-import com.peng.idea.plugin.builder.api.RemoveBuilderDialogDO;
-import com.peng.idea.plugin.builder.api.TripleComponentDO;
 import com.peng.idea.plugin.builder.listener.ChooserDisplayerActionListener;
 import com.peng.idea.plugin.builder.manager.BuilderSettingsManager;
 import com.peng.idea.plugin.builder.manager.BuilderTemplateManager;
@@ -33,6 +31,7 @@ import com.peng.idea.plugin.builder.util.GsonUtil;
 import com.peng.idea.plugin.builder.util.PanelUtil;
 import com.peng.idea.plugin.builder.util.StyleUtil;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
+import com.peng.idea.plugin.builder.util.psi.BuilderGenerateUtil;
 import com.peng.idea.plugin.builder.util.psi.GuiHelperUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +44,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static com.peng.idea.plugin.builder.util.BooleanUtil.nullToFalse;
@@ -75,10 +75,12 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
     private JRadioButton customRadio;
     private final ComboBox<BuilderTemplate> customTemplateCombo = new ComboBox<>();
     private JTextField targetClassNameField;
-    private JTextField targetMethodPrefix;
-    private JCheckBox innerBuilder;
-    private JCheckBox butMethod;
-    private JCheckBox useSingleField;
+    private JTextField builderMethodNameField;
+    private JTextField targetMethodPrefixField;
+    private JCheckBox srcClassBuilderBox;
+    private JCheckBox innerBuilderBox;
+    private JCheckBox butMethodBox;
+    private JCheckBox useSingleBox;
     private ReferenceEditorComboWithBrowseButton targetPackageField;
     private final GenerateBuilderDialogDO generateDO;
     private final BuilderSettings builderSettings;
@@ -92,7 +94,9 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         this.builderSettings = BuilderSettingsManager.getInstance().getSettings();
         this.builderTemplates = safeList(BuilderTemplateManager.getInstance().getTemplates());
         internalBuilderTemplate.setClassName(generateDO.getPossibleSrcPsiClass().getName() + BuilderConstant.BUILDER_SUFFIX);
+        internalBuilderTemplate.setBuilderMethodName(BuilderGenerateUtil.builderMethodName(generateDO.getPossibleSrcPsiClass().getName()));
         internalBuilderTemplate.setMethodPrefix(BuilderConstant.METHOD_PREFIX);
+        internalBuilderTemplate.setSrcClassBuilder(true);
         this.targetPackageField = new ReferenceEditorComboWithBrowseButton(
                 null, generateDO.getEditorPackage().getQualifiedName(), project, true, RECENTS_KEY
         );
@@ -184,10 +188,16 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         builder.addLabelComponent(new JLabel("Class name: "), targetClassNameField);
         // Class name
 
+        // builder method name
+        builderMethodNameField = new JBTextField(internalBuilderTemplate.getBuilderMethodName());
+        StyleUtil.setPreferredSize(builderMethodNameField);
+        builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodNameField);
+        // builder method name
+
         // Method prefix
-        targetMethodPrefix = new JBTextField(internalBuilderTemplate.getMethodPrefix());
-        StyleUtil.setPreferredSize(targetMethodPrefix);
-        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefix);
+        targetMethodPrefixField = new JBTextField(internalBuilderTemplate.getMethodPrefix());
+        StyleUtil.setPreferredSize(targetMethodPrefixField);
+        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefixField);
         // Method prefix
 
         // Destination package
@@ -209,22 +219,28 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         builder.addLabelComponent(new JLabel(CodeInsightBundle.message("action.flatten.packages")), targetPackageField);
         // Destination package
 
+        // src class builder
+        srcClassBuilderBox = new JCheckBox();
+        srcClassBuilderBox.setSelected(nullToFalse(internalBuilderTemplate.getSrcClassBuilder()));
+        builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilderBox);
+        // src class builder
+
         // Inner builder
-        innerBuilder = new JCheckBox();
-        innerBuilder.setSelected(false);
-        builder.addLabelComponent(new JLabel("Inner builder: "), innerBuilder);
+        innerBuilderBox = new JCheckBox();
+        innerBuilderBox.setSelected(false);
+        builder.addLabelComponent(new JLabel("Inner builder: "), innerBuilderBox);
         // Inner builder
 
         // but method
-        butMethod = new JCheckBox();
-        butMethod.setSelected(false);
-        builder.addLabelComponent(new JLabel("'but' method: "), butMethod);
+        butMethodBox = new JCheckBox();
+        butMethodBox.setSelected(false);
+        builder.addLabelComponent(new JLabel("'but' method: "), butMethodBox);
         // but method
 
         // useSingleField
-        useSingleField = new JCheckBox();
-        useSingleField.setSelected(false);
-        builder.addLabelComponent(new JLabel("Use single field: "), useSingleField);
+        useSingleBox = new JCheckBox();
+        useSingleBox.setSelected(false);
+        builder.addLabelComponent(new JLabel("Use single field: "), useSingleBox);
         // useSingleField
 
         myMainPanel = builder.getPanel();
@@ -271,10 +287,17 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         builder.addLabelComponent(new JLabel("Class name: "), targetClassNameField);
         // Class name
 
+        // builder method name
+        String className = safeObject(generateDO.getPossibleSrcPsiClass()).map(PsiClass::getName).orElse("");
+        builderMethodNameField = new JBTextField(this.generateBuilderMethodName(className, builderTemplate.getBuilderMethodName()));
+        StyleUtil.setPreferredSize(builderMethodNameField);
+        builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodNameField);
+        // builder method name
+
         // Method prefix
-        targetMethodPrefix = new JBTextField(nullToEmpty(builderTemplate.getMethodPrefix()));
-        StyleUtil.setPreferredSize(targetMethodPrefix);
-        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefix);
+        targetMethodPrefixField = new JBTextField(nullToEmpty(builderTemplate.getMethodPrefix()));
+        StyleUtil.setPreferredSize(targetMethodPrefixField);
+        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefixField);
         // Method prefix
 
         // Destination package
@@ -292,22 +315,28 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         builder.addLabelComponent(new JLabel(CodeInsightBundle.message("action.flatten.packages")), targetPackageField);
         // Destination package
 
+        // src class builder
+        srcClassBuilderBox = new JCheckBox();
+        srcClassBuilderBox.setSelected(nullToFalse(builderTemplate.getSrcClassBuilder()));
+        builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilderBox);
+        // src class builder
+
         // Inner builder
-        innerBuilder = new JCheckBox();
-        innerBuilder.setSelected(nullToFalse(builderTemplate.getInnerBuilder()));
-        builder.addLabelComponent(new JLabel("Inner builder: "), innerBuilder);
+        innerBuilderBox = new JCheckBox();
+        innerBuilderBox.setSelected(nullToFalse(builderTemplate.getInnerBuilder()));
+        builder.addLabelComponent(new JLabel("Inner builder: "), innerBuilderBox);
         // Inner builder
 
         // but method
-        butMethod = new JCheckBox();
-        butMethod.setSelected(nullToFalse(builderTemplate.getButMethod()));
-        builder.addLabelComponent(new JLabel("'but' method: "), butMethod);
+        butMethodBox = new JCheckBox();
+        butMethodBox.setSelected(nullToFalse(builderTemplate.getButMethod()));
+        builder.addLabelComponent(new JLabel("'but' method: "), butMethodBox);
         // but method
 
         // useSingleField
-        useSingleField = new JCheckBox();
-        useSingleField.setSelected(nullToFalse(builderTemplate.getUseSingleField()));
-        builder.addLabelComponent(new JLabel("Use single field: "), useSingleField);
+        useSingleBox = new JCheckBox();
+        useSingleBox.setSelected(nullToFalse(builderTemplate.getUseSingleField()));
+        builder.addLabelComponent(new JLabel("Use single field: "), useSingleBox);
         // useSingleField
 
         myMainPanel = builder.getPanel();
@@ -323,10 +352,10 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
                 customTemplateCombo.setSelectedItem(null);
 
                 targetClassNameField.setText(internalBuilderTemplate.getClassName());
-                targetMethodPrefix.setText(internalBuilderTemplate.getMethodPrefix());
-                innerBuilder.setSelected(nullToFalse(internalBuilderTemplate.getInnerBuilder()));
-                butMethod.setSelected(nullToFalse(internalBuilderTemplate.getButMethod()));
-                useSingleField.setSelected(nullToFalse(internalBuilderTemplate.getUseSingleField()));
+                targetMethodPrefixField.setText(internalBuilderTemplate.getMethodPrefix());
+                innerBuilderBox.setSelected(nullToFalse(internalBuilderTemplate.getInnerBuilder()));
+                butMethodBox.setSelected(nullToFalse(internalBuilderTemplate.getButMethod()));
+                useSingleBox.setSelected(nullToFalse(internalBuilderTemplate.getUseSingleField()));
             } else {
                 BuilderTemplate builderTemplate = builderSettings.getBuilderTemplate();
                 customTemplateCombo.setSelectedItem(builderTemplate);
@@ -340,10 +369,10 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
             BuilderTemplate builderTemplate = (BuilderTemplate) customTemplateCombo.getSelectedItem();
             if (!isInternal && builderTemplate != null) {
                 targetClassNameField.setText(this.generateTemplateClassName(builderTemplate.getClassName()));
-                targetMethodPrefix.setText(builderTemplate.getMethodPrefix());
-                innerBuilder.setSelected(nullToFalse(builderTemplate.getInnerBuilder()));
-                butMethod.setSelected(nullToFalse(builderTemplate.getButMethod()));
-                useSingleField.setSelected(nullToFalse(builderTemplate.getUseSingleField()));
+                targetMethodPrefixField.setText(builderTemplate.getMethodPrefix());
+                innerBuilderBox.setSelected(nullToFalse(builderTemplate.getInnerBuilder()));
+                butMethodBox.setSelected(nullToFalse(builderTemplate.getButMethod()));
+                useSingleBox.setSelected(nullToFalse(builderTemplate.getUseSingleField()));
             }
         };
     }
@@ -354,6 +383,12 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
                 .replace(Constants.Template.SRC_CLASS_NAME,
                         safeObject(generateDO.getPossibleSrcPsiClass()).map(PsiClass::getName).orElse(""));
         return className;
+    }
+
+    private String generateBuilderMethodName(String className, String builderMethodName) {
+        return isEmpty(builderMethodName) ?
+                internalBuilderTemplate.getBuilderMethodName() :
+                className.replace(Constants.Template.INTERNAL_BUILDER_METHOD_NAME, internalBuilderTemplate.getBuilderMethodName());
     }
 
     private void checkIfSourceClassHasZeroArgsConstructorWhenUsingSingleField() {
@@ -375,7 +410,7 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
     }
 
     private void checkIfClassCanBeCreated(Module module) {
-        if (!isInnerBuilder()) {
+        if (!getInnerBuilder()) {
             Consumer<PsiDirectory> consumer = this::setTargetDirectory;
             SelectDirectory selectDirectory = new SelectDirectory(consumer, module, getPackageName(), getClassName(), generateDO.getPossibleSrcPsiClass());
             executeCommand(selectDirectory);
@@ -408,20 +443,28 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         return targetClassNameField.getText();
     }
 
-    public String getMethodPrefix() {
-        return targetMethodPrefix.getText();
+    public String getBuilderMethodName() {
+        return builderMethodNameField.getText();
     }
 
-    public boolean isInnerBuilder() {
-        return innerBuilder.isSelected();
+    public String getMethodPrefix() {
+        return targetMethodPrefixField.getText();
+    }
+
+    public boolean getSrcClassBuilder() {
+        return srcClassBuilderBox.isSelected();
+    }
+
+    public boolean getInnerBuilder() {
+        return innerBuilderBox.isSelected();
     }
 
     public boolean hasButMethod() {
-        return butMethod.isSelected();
+        return butMethodBox.isSelected();
     }
 
     public boolean useSingleField() {
-        return useSingleField.isSelected();
+        return useSingleBox.isSelected();
     }
 
     public PsiDirectory getTargetDirectory() {

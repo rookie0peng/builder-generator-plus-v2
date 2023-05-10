@@ -20,11 +20,15 @@ public class BuilderTemplate implements Entity {
 
     private String className;
 
+    private String builderMethodName;
+
     private String methodPrefix;
 
-    private Boolean innerBuilder;
 
-    // ******************** 分割线 ********************
+
+    private Boolean srcClassBuilder;
+
+    private Boolean innerBuilder;
 
     private Boolean butMethod;
 
@@ -39,9 +43,11 @@ public class BuilderTemplate implements Entity {
             this.id = builderTemplate.id;
             this.templateName = builderTemplate.templateName;
             this.className = builderTemplate.className;
+            this.builderMethodName = builderTemplate.builderMethodName;
             this.methodPrefix = builderTemplate.methodPrefix;
-            this.innerBuilder = builderTemplate.innerBuilder;
 
+            this.srcClassBuilder = builderTemplate.srcClassBuilder;
+            this.innerBuilder = builderTemplate.innerBuilder;
             this.butMethod = builderTemplate.butMethod;
             this.useSingleField = builderTemplate.useSingleField;
         }
@@ -75,12 +81,28 @@ public class BuilderTemplate implements Entity {
         this.className = className;
     }
 
+    public String getBuilderMethodName() {
+        return builderMethodName;
+    }
+
+    public void setBuilderMethodName(String builderMethodName) {
+        this.builderMethodName = builderMethodName;
+    }
+
     public String getMethodPrefix() {
         return methodPrefix;
     }
 
     public void setMethodPrefix(String methodPrefix) {
         this.methodPrefix = methodPrefix;
+    }
+
+    public Boolean getSrcClassBuilder() {
+        return srcClassBuilder;
+    }
+
+    public void setSrcClassBuilder(Boolean srcClassBuilder) {
+        this.srcClassBuilder = srcClassBuilder;
     }
 
     public Boolean getInnerBuilder() {
@@ -129,7 +151,9 @@ public class BuilderTemplate implements Entity {
         private String id;
         private String templateName;
         private String className;
+        private String builderMethodName;
         private String methodPrefix;
+        private Boolean srcClassBuilder;
         private Boolean innerBuilder;
         private Boolean butMethod;
         private Boolean useSingleField;
@@ -156,8 +180,18 @@ public class BuilderTemplate implements Entity {
             return this;
         }
 
+        public BuilderTemplateBuilder builderMethodName(String builderMethodName) {
+            this.builderMethodName = builderMethodName;
+            return this;
+        }
+
         public BuilderTemplateBuilder methodPrefix(String methodPrefix) {
             this.methodPrefix = methodPrefix;
+            return this;
+        }
+
+        public BuilderTemplateBuilder srcClassBuilder(Boolean srcClassBuilder) {
+            this.srcClassBuilder = srcClassBuilder;
             return this;
         }
 
@@ -181,7 +215,9 @@ public class BuilderTemplate implements Entity {
             builderTemplate.setId(id);
             builderTemplate.setTemplateName(templateName);
             builderTemplate.setClassName(className);
+            builderTemplate.setBuilderMethodName(builderMethodName);
             builderTemplate.setMethodPrefix(methodPrefix);
+            builderTemplate.setSrcClassBuilder(srcClassBuilder);
             builderTemplate.setInnerBuilder(innerBuilder);
             builderTemplate.setButMethod(butMethod);
             builderTemplate.setUseSingleField(useSingleField);

@@ -3,6 +3,7 @@ package com.peng.idea.plugin.builder.psi;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.peng.idea.plugin.builder.settings.CodeStyleSettings2;
+import com.peng.idea.plugin.builder.util.psi.BuilderGenerateUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import com.peng.idea.plugin.builder.util.verifier.PsiFieldVerifierUtil;
 import com.peng.idea.plugin.builder.writter.BuilderContext;
@@ -47,7 +48,9 @@ public class BuilderPsiClassBuilder {
     private PsiElementFactory elementFactory = null;
     private String srcClassName = null;
     private String srcClassFieldName = null;
+    private String builderMethodName = null;
 
+    private boolean srcClassBuilder = true;
     private boolean useSingleField = false;
     private boolean isInline = false;
 
@@ -87,9 +90,11 @@ public class BuilderPsiClassBuilder {
         builderClassName = context.getClassName();
         srcClassName = context.getPsiClassFromEditor().getName();
         srcClassFieldName = StringUtils.uncapitalize(srcClassName);
+        builderMethodName = context.getBuilderMethodName();
         psiFieldsForSetters = context.getPsiFieldsForBuilder().getFieldsForSetters();
         psiFieldsForConstructor = context.getPsiFieldsForBuilder().getFieldsForConstructor();
         allSelectedPsiFields = context.getPsiFieldsForBuilder().getAllSelectedFields();
+        srcClassBuilder = context.isSrcClassBuilder();
         useSingleField = context.isUseSingleField();
         bestConstructor = context.getPsiFieldsForBuilder().getBestConstructor();
         methodCreator = new MethodCreator(elementFactory, builderClassName);
@@ -117,7 +122,7 @@ public class BuilderPsiClassBuilder {
     public BuilderPsiClassBuilder withPrivateConstructor() {
         PsiMethod constructor;
         if (useSingleField) {
-            constructor = elementFactory.createMethodFromText(builderClassName + "(){ " + srcClassFieldName + " = new " + srcClassName + "(); }", srcClass);
+            constructor = elementFactory.createMethodFromText(builderClassName + "() { " + srcClassFieldName + " = new " + srcClassName + "(); }", srcClass);
         } else {
             constructor = elementFactory.createConstructor();
         }
@@ -131,9 +136,9 @@ public class BuilderPsiClassBuilder {
      * @return
      */
     public BuilderPsiClassBuilder withInitializingMethod() {
-        String prefix = isVowel(srcClassName.toLowerCase(Locale.ENGLISH).charAt(0)) ? AN_PREFIX : A_PREFIX;
+//        String builderMethodName = BuilderGenerateUtil.builderMethodName(srcClassName);
         PsiMethod staticMethod = elementFactory.createMethodFromText(
-                "public static " + builderClassName + prefix + srcClassName + "() { return new " + builderClassName + "(); }", srcClass);
+                "public static " + builderClassName + " " + builderMethodName + "() { return new " + builderClassName + "(); }", srcClass);
         builderClass.add(staticMethod);
         return this;
     }
@@ -143,10 +148,12 @@ public class BuilderPsiClassBuilder {
      * @return
      */
     public BuilderPsiClassBuilder withSrcClassBuilder() {
-        String prefix = isVowel(srcClassName.toLowerCase(Locale.ENGLISH).charAt(0)) ? AN_PREFIX : A_PREFIX;
-        PsiMethod staticSrcMethod = elementFactory.createMethodFromText(
-                "public static " + builderClassName + " builder() { return " + builderClassName + "." + prefix + srcClassName + "(); }", srcClass);
-        srcClass.add(staticSrcMethod);
+        if (srcClassBuilder) {
+            //        String prefix = isVowel(srcClassName.toLowerCase(Locale.ENGLISH).charAt(0)) ? AN_PREFIX : A_PREFIX;
+            PsiMethod staticSrcMethod = elementFactory.createMethodFromText(
+                    "public static " + builderClassName + " builder() { return " + builderClassName + "." + builderMethodName + "(); }", srcClass);
+            srcClass.add(staticSrcMethod);
+        }
         return this;
     }
 

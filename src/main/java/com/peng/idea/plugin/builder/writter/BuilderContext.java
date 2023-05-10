@@ -1,10 +1,11 @@
 package com.peng.idea.plugin.builder.writter;
 
-import com.google.common.base.Objects;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.peng.idea.plugin.builder.psi.model.PsiFieldsForBuilder;
+
+import java.util.Objects;
 
 /**
  * <pre>
@@ -19,33 +20,36 @@ public class BuilderContext {
     private PsiFieldsForBuilder psiFieldsForBuilder;
     private PsiDirectory targetDirectory;
     private String className;
-    private PsiClass psiClassFromEditor;
+    private String builderMethodName;
 
+    private PsiClass psiClassFromEditor;
     private String methodPrefix;
+    private boolean srcClassBuilder;
     private boolean isInner;
     private boolean hasButMethod;
+
     private boolean useSingleField;
-
-    public BuilderContext() {
-    }
-
-    public BuilderContext(Project project, PsiFieldsForBuilder psiFieldsForBuilder,
-                          PsiDirectory targetDirectory, String className, PsiClass psiClassFromEditor,
-                          String methodPrefix, boolean isInner, boolean hasButMethod, boolean useSingleField) {
-        this.project = project;
-        this.psiFieldsForBuilder = psiFieldsForBuilder;
-        this.targetDirectory = targetDirectory;
-        this.className = className;
-        this.psiClassFromEditor = psiClassFromEditor;
-        this.methodPrefix = methodPrefix;
-        this.isInner = isInner;
-        this.hasButMethod = hasButMethod;
-        this.useSingleField = useSingleField;
-    }
 
     public static BuilderContextBuilder builder() {
         return BuilderContextBuilder.aBuilderContext();
     }
+
+//    public BuilderContext() {
+//    }
+
+//    public BuilderContext(Project project, PsiFieldsForBuilder psiFieldsForBuilder,
+//                          PsiDirectory targetDirectory, String className, PsiClass psiClassFromEditor,
+//                          String methodPrefix, boolean isInner, boolean hasButMethod, boolean useSingleField) {
+//        this.project = project;
+//        this.psiFieldsForBuilder = psiFieldsForBuilder;
+//        this.targetDirectory = targetDirectory;
+//        this.className = className;
+//        this.psiClassFromEditor = psiClassFromEditor;
+//        this.methodPrefix = methodPrefix;
+//        this.isInner = isInner;
+//        this.hasButMethod = hasButMethod;
+//        this.useSingleField = useSingleField;
+//    }
 
     public Project getProject() {
         return project;
@@ -79,6 +83,14 @@ public class BuilderContext {
         this.className = className;
     }
 
+    public String getBuilderMethodName() {
+        return builderMethodName;
+    }
+
+    public void setBuilderMethodName(String builderMethodName) {
+        this.builderMethodName = builderMethodName;
+    }
+
     public PsiClass getPsiClassFromEditor() {
         return psiClassFromEditor;
     }
@@ -95,11 +107,19 @@ public class BuilderContext {
         this.methodPrefix = methodPrefix;
     }
 
+    public boolean isSrcClassBuilder() {
+        return srcClassBuilder;
+    }
+
+    public void setSrcClassBuilder(boolean srcClassBuilder) {
+        this.srcClassBuilder = srcClassBuilder;
+    }
+
     public boolean isInner() {
         return isInner;
     }
 
-    public void setInner(boolean inner) {
+    public void setIsInner(boolean inner) {
         isInner = inner;
     }
 
@@ -120,25 +140,16 @@ public class BuilderContext {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(project, psiFieldsForBuilder, targetDirectory, className, psiClassFromEditor, methodPrefix);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BuilderContext that = (BuilderContext) o;
+        return srcClassBuilder == that.srcClassBuilder && isInner == that.isInner && hasButMethod == that.hasButMethod && useSingleField == that.useSingleField && Objects.equals(project, that.project) && Objects.equals(psiFieldsForBuilder, that.psiFieldsForBuilder) && Objects.equals(targetDirectory, that.targetDirectory) && Objects.equals(className, that.className) && Objects.equals(builderMethodName, that.builderMethodName) && Objects.equals(psiClassFromEditor, that.psiClassFromEditor) && Objects.equals(methodPrefix, that.methodPrefix);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        BuilderContext other = (BuilderContext) obj;
-        return Objects.equal(this.project, other.project)
-                && Objects.equal(this.psiFieldsForBuilder, other.psiFieldsForBuilder)
-                && Objects.equal(this.targetDirectory, other.targetDirectory)
-                && Objects.equal(this.className, other.className)
-                && Objects.equal(this.psiClassFromEditor, other.psiClassFromEditor)
-                && Objects.equal(this.methodPrefix, other.methodPrefix);
+    public int hashCode() {
+        return Objects.hash(project, psiFieldsForBuilder, targetDirectory, className, builderMethodName, psiClassFromEditor, methodPrefix, srcClassBuilder, isInner, hasButMethod, useSingleField);
     }
 
     public static final class BuilderContextBuilder {
@@ -146,8 +157,10 @@ public class BuilderContext {
         private PsiFieldsForBuilder psiFieldsForBuilder;
         private PsiDirectory targetDirectory;
         private String className;
+        private String builderMethodName;
         private PsiClass psiClassFromEditor;
         private String methodPrefix;
+        private boolean srcClassBuilder;
         private boolean isInner;
         private boolean hasButMethod;
         private boolean useSingleField;
@@ -179,6 +192,11 @@ public class BuilderContext {
             return this;
         }
 
+        public BuilderContextBuilder builderMethodName(String builderMethodName) {
+            this.builderMethodName = builderMethodName;
+            return this;
+        }
+
         public BuilderContextBuilder psiClassFromEditor(PsiClass psiClassFromEditor) {
             this.psiClassFromEditor = psiClassFromEditor;
             return this;
@@ -186,6 +204,11 @@ public class BuilderContext {
 
         public BuilderContextBuilder methodPrefix(String methodPrefix) {
             this.methodPrefix = methodPrefix;
+            return this;
+        }
+
+        public BuilderContextBuilder srcClassBuilder(boolean srcClassBuilder) {
+            this.srcClassBuilder = srcClassBuilder;
             return this;
         }
 
@@ -205,7 +228,19 @@ public class BuilderContext {
         }
 
         public BuilderContext build() {
-            return new BuilderContext(project, psiFieldsForBuilder, targetDirectory, className, psiClassFromEditor, methodPrefix, isInner, hasButMethod, useSingleField);
+            BuilderContext builderContext = new BuilderContext();
+            builderContext.setProject(project);
+            builderContext.setPsiFieldsForBuilder(psiFieldsForBuilder);
+            builderContext.setTargetDirectory(targetDirectory);
+            builderContext.setClassName(className);
+            builderContext.setBuilderMethodName(builderMethodName);
+            builderContext.setPsiClassFromEditor(psiClassFromEditor);
+            builderContext.setMethodPrefix(methodPrefix);
+            builderContext.setSrcClassBuilder(srcClassBuilder);
+            builderContext.setHasButMethod(hasButMethod);
+            builderContext.setUseSingleField(useSingleField);
+            builderContext.setIsInner(isInner);
+            return builderContext;
         }
     }
 }

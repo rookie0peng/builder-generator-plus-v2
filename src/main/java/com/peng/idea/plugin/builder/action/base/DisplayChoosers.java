@@ -13,6 +13,7 @@ import com.peng.idea.plugin.builder.psi.PsiFieldSelector;
 import com.peng.idea.plugin.builder.psi.model.PsiFieldsForBuilder;
 import com.peng.idea.plugin.builder.util.dialog.CreateBuilderDialogUtil;
 import com.peng.idea.plugin.builder.util.dialog.MemberChooserDialogUtil;
+import com.peng.idea.plugin.builder.util.psi.BuilderGenerateUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiFieldsForBuilderUtil;
 import com.peng.idea.plugin.builder.writter.BuilderContext;
@@ -84,9 +85,18 @@ public class DisplayChoosers {
         if (memberChooserDialog.isOK()) {
             List<PsiElementClassMember> selectedElements = safeList(memberChooserDialog.getSelectedElements());
             PsiFieldsForBuilder psiFieldsForBuilder = PsiFieldsForBuilderUtil.createPsiFieldsForBuilder(selectedElements, psiClassFromEditor);
-            BuilderContext context = new BuilderContext(
-                    project, psiFieldsForBuilder, targetDirectory, className, psiClassFromEditor, methodPrefix, createBuilderDialog.isInnerBuilder(), createBuilderDialog.hasButMethod(), createBuilderDialog.useSingleField());
-            BuilderWriter.writeBuilder(context, existingBuilder, existingBuildMethods);
+            BuilderContext builderContext = BuilderContext.builder()
+                    .project(project).psiFieldsForBuilder(psiFieldsForBuilder).targetDirectory(targetDirectory)
+                    .className(className).builderMethodName(BuilderGenerateUtil.builderMethodName(className))
+
+                    .psiClassFromEditor(psiClassFromEditor).methodPrefix(methodPrefix)
+                    .srcClassBuilder(true).isInner(createBuilderDialog.isInnerBuilder()).hasButMethod(createBuilderDialog.hasButMethod())
+
+                    .useSingleField(createBuilderDialog.useSingleField())
+                    .build();
+//            BuilderContext context = new BuilderContext(
+//                    project, psiFieldsForBuilder, targetDirectory, className, psiClassFromEditor, methodPrefix, createBuilderDialog.isInnerBuilder(), createBuilderDialog.hasButMethod(), createBuilderDialog.useSingleField());
+            BuilderWriter.writeBuilder(builderContext, existingBuilder, existingBuildMethods);
         }
     }
 

@@ -25,6 +25,8 @@ public final class Constants {
 
         public static final String INTERNAL_CLASS_NAME = "${internalClassName}";
 
+        public static final String INTERNAL_BUILDER_METHOD_NAME = "${internalBuilderMethodName}";
+
         public static final String SRC_CLASS_NAME = "${srcClassName}";
 
         private static final List<String> DYNAMIC_VALUES = ListUtil.newArrayList(INTERNAL_CLASS_NAME, SRC_CLASS_NAME);

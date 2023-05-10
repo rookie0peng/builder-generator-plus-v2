@@ -18,6 +18,10 @@ public final class BuilderConstant {
 
     public static final String METHOD_PREFIX = "with";
 
+    public static final String A_PREFIX = "a";
+
+    public static final String AN_PREFIX = "an";
+
     public static final class GenerateBuilder {
 
         public static final String DIALOG_NAME = "GenerateBuilder";

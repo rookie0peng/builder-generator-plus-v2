@@ -111,8 +111,10 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
         if (generateBuilderDialogV2.isOK()) {
             PsiDirectory targetDirectory = generateBuilderDialogV2.getTargetDirectory();
             String className = generateBuilderDialogV2.getClassName();
+            String builderMethodName = generateBuilderDialogV2.getBuilderMethodName();
             String methodPrefix = generateBuilderDialogV2.getMethodPrefix();
-            boolean innerBuilder = generateBuilderDialogV2.isInnerBuilder();
+            boolean srcClassBuilder = generateBuilderDialogV2.getSrcClassBuilder();
+            boolean innerBuilder = generateBuilderDialogV2.getInnerBuilder();
             boolean useSingleField = generateBuilderDialogV2.useSingleField();
             boolean hasButMethod = generateBuilderDialogV2.hasButMethod();
             List<PsiElementClassMember> fieldsToDisplay = PsiFieldSelector.getFieldsToIncludeInBuilder(
@@ -127,11 +129,20 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
 
                 List<PsiElementClassMember> selectedElements = safeList(memberChooserDialog.getSelectedElements());
                 PsiFieldsForBuilder psiFieldsForBuilder = PsiFieldsForBuilderUtil.createPsiFieldsForBuilder(selectedElements, generateDO.getPossibleSrcPsiClass());
-                BuilderContext context = new BuilderContext(
-                        generateDO.getProject(), psiFieldsForBuilder, targetDirectory, className, generateDO.getPossibleSrcPsiClass(), methodPrefix, innerBuilder, hasButMethod, useSingleField);
+                BuilderContext builderContext = BuilderContext.builder()
+                        .project(generateDO.getProject()).psiFieldsForBuilder(psiFieldsForBuilder).targetDirectory(targetDirectory)
+                        .className(className).builderMethodName(builderMethodName)
+
+                        .psiClassFromEditor(generateDO.getPossibleSrcPsiClass()).methodPrefix(methodPrefix)
+                        .srcClassBuilder(srcClassBuilder).isInner(innerBuilder).hasButMethod(hasButMethod)
+
+                        .useSingleField(useSingleField)
+                        .build();
+//                BuilderContext context = new BuilderContext(
+//                        generateDO.getProject(), psiFieldsForBuilder, targetDirectory, className, generateDO.getPossibleSrcPsiClass(), methodPrefix, innerBuilder, hasButMethod, useSingleField);
 //                Application application = PsiClassUtil.getApplication();
 //                application.runWriteAction(() -> {new BuilderWriterComputable(context, generateDO.getPossibleBuilderPsiClass(), builderMethods);});
-                BuilderWriter.writeBuilder(context, generateDO.getPossibleBuilderPsiClass(), builderMethods);
+                BuilderWriter.writeBuilder(builderContext, generateDO.getPossibleBuilderPsiClass(), builderMethods);
 //                BuilderWriter.writeBuilder(context, existingBuilder, existingBuildMethods);
             }
         }
