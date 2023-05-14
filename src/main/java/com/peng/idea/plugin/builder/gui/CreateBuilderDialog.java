@@ -21,6 +21,7 @@ import com.peng.idea.plugin.builder.manager.BuilderTemplateManager;
 import com.peng.idea.plugin.builder.model.BuilderSettings;
 import com.peng.idea.plugin.builder.model.BuilderTemplate;
 import com.peng.idea.plugin.builder.util.*;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.psi.GuiHelperUtil;
 import com.peng.idea.plugin.builder.util.psi.PsiClassUtil;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -440,8 +437,8 @@ public class CreateBuilderDialog extends DialogWrapper {
 
     private String generateTemplateClassName(String className) {
         className = isEmpty(className) ? internalTemplateValue.getClassName() : className
-                .replace(Constants.Template.INTERNAL_CLASS_NAME, nullToEmpty(internalTemplateValue.getClassName()))
-                .replace(Constants.Template.SRC_CLASS_NAME, safeObject(sourceClass).map(PsiClass::getName).orElse(""));
+                .replace(BuilderConstant.Template.INTERNAL_CLASS_NAME, nullToEmpty(internalTemplateValue.getClassName()))
+                .replace(BuilderConstant.Template.SRC_CLASS_NAME, safeObject(sourceClass).map(PsiClass::getName).orElse(""));
         return className;
     }
 

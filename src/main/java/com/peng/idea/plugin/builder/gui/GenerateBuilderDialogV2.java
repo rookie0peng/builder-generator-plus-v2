@@ -26,7 +26,6 @@ import com.peng.idea.plugin.builder.manager.BuilderSettingsManager;
 import com.peng.idea.plugin.builder.manager.BuilderTemplateManager;
 import com.peng.idea.plugin.builder.model.BuilderSettings;
 import com.peng.idea.plugin.builder.model.BuilderTemplate;
-import com.peng.idea.plugin.builder.util.Constants;
 import com.peng.idea.plugin.builder.util.GsonUtil;
 import com.peng.idea.plugin.builder.util.PanelUtil;
 import com.peng.idea.plugin.builder.util.StyleUtil;
@@ -44,7 +43,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import static com.peng.idea.plugin.builder.util.BooleanUtil.nullToFalse;
@@ -94,7 +92,7 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
         this.builderSettings = BuilderSettingsManager.getInstance().getSettings();
         this.builderTemplates = safeList(BuilderTemplateManager.getInstance().getTemplates());
         internalBuilderTemplate.setClassName(generateDO.getPossibleSrcPsiClass().getName() + BuilderConstant.BUILDER_SUFFIX);
-        internalBuilderTemplate.setBuilderMethodName(BuilderGenerateUtil.builderMethodName(generateDO.getPossibleSrcPsiClass().getName()));
+        internalBuilderTemplate.setBuilderMethodName(BuilderConstant.Template.Value.INTERNAL_BUILDER_METHOD_NAME);
         internalBuilderTemplate.setMethodPrefix(BuilderConstant.METHOD_PREFIX);
         internalBuilderTemplate.setSrcClassBuilder(true);
         this.targetPackageField = new ReferenceEditorComboWithBrowseButton(
@@ -289,7 +287,7 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
 
         // builder method name
         String className = safeObject(generateDO.getPossibleSrcPsiClass()).map(PsiClass::getName).orElse("");
-        builderMethodNameField = new JBTextField(this.generateBuilderMethodName(className, builderTemplate.getBuilderMethodName()));
+        builderMethodNameField = new JBTextField(this.generateBuilderMethodName(builderTemplate.getBuilderMethodName()));
         StyleUtil.setPreferredSize(builderMethodNameField);
         builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodNameField);
         // builder method name
@@ -379,16 +377,16 @@ public class GenerateBuilderDialogV2 extends DialogWrapper {
 
     private String generateTemplateClassName(String className) {
         className = isEmpty(className) ? internalBuilderTemplate.getClassName() : className
-                .replace(Constants.Template.INTERNAL_CLASS_NAME, nullToEmpty(internalBuilderTemplate.getClassName()))
-                .replace(Constants.Template.SRC_CLASS_NAME,
+                .replace(BuilderConstant.Template.INTERNAL_CLASS_NAME, nullToEmpty(internalBuilderTemplate.getClassName()))
+                .replace(BuilderConstant.Template.SRC_CLASS_NAME,
                         safeObject(generateDO.getPossibleSrcPsiClass()).map(PsiClass::getName).orElse(""));
         return className;
     }
 
-    private String generateBuilderMethodName(String className, String builderMethodName) {
+    private String generateBuilderMethodName(String builderMethodName) {
         return isEmpty(builderMethodName) ?
                 internalBuilderTemplate.getBuilderMethodName() :
-                className.replace(Constants.Template.INTERNAL_BUILDER_METHOD_NAME, internalBuilderTemplate.getBuilderMethodName());
+                builderMethodName.replace(BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME, internalBuilderTemplate.getBuilderMethodName());
     }
 
     private void checkIfSourceClassHasZeroArgsConstructorWhenUsingSingleField() {

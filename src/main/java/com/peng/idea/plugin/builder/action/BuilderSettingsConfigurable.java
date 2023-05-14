@@ -4,14 +4,12 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ComponentManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.peng.idea.plugin.builder.gui.BuilderSettingsComponent;
 import com.peng.idea.plugin.builder.manager.BuilderSettingsManager;
 import com.peng.idea.plugin.builder.model.BuilderSettings;
-import com.peng.idea.plugin.builder.util.Constants;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -48,7 +46,7 @@ public class BuilderSettingsConfigurable implements Configurable {
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return Constants.Settings.BUILDER;
+        return BuilderConstant.Settings.BUILDER;
     }
 
     @Nullable

@@ -1,4 +1,6 @@
-package com.peng.idea.plugin.builder.util;
+package com.peng.idea.plugin.builder.util.constant;
+
+import com.peng.idea.plugin.builder.util.ListUtil;
 
 import java.util.ArrayList;
 import java.util.List;

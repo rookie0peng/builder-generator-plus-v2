@@ -17,7 +17,7 @@ import com.peng.idea.plugin.builder.manager.BuilderSettingsManager;
 import com.peng.idea.plugin.builder.manager.BuilderTemplateManager;
 import com.peng.idea.plugin.builder.model.BuilderSettings;
 import com.peng.idea.plugin.builder.model.BuilderTemplate;
-import com.peng.idea.plugin.builder.util.Constants;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public class BuilderTemplateConfigurable implements Configurable {
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return Constants.Settings.BUILDER_TEMPLATE;
+        return BuilderConstant.Settings.BUILDER_TEMPLATE;
     }
 
     @Nullable

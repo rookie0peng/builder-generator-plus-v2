@@ -12,8 +12,10 @@ import com.peng.idea.plugin.builder.manager.BuilderSettingsManager;
 import com.peng.idea.plugin.builder.manager.BuilderTemplateManager;
 import com.peng.idea.plugin.builder.model.BuilderSettings;
 import com.peng.idea.plugin.builder.model.BuilderTemplate;
-import com.peng.idea.plugin.builder.util.Constants;
+import com.peng.idea.plugin.builder.util.AutoCompleteUtil;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.PanelUtil;
+import com.peng.idea.plugin.builder.util.StyleUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +51,10 @@ public class BuilderSettingsComponent {
     private JRadioButton myInternalRadio;
     private JRadioButton myCustomRadio;
     private final ComboBox<BuilderTemplate> customTemplate = new ComboBox<>();
-    private JTextField targetClassNameField;
+    private JTextField targetClassName;
+    private JTextField builderMethodName;
     private JTextField targetMethodPrefix;
+    private JCheckBox srcClassBuilder;
     private JCheckBox innerBuilder;
     private JCheckBox butMethod;
     private JCheckBox useSingleField;
@@ -134,19 +138,26 @@ public class BuilderSettingsComponent {
         // Custom template
 
         // Class name
-        targetClassNameField = new JBTextField();
-        targetClassNameField.setEnabled(false);
-        builder.addLabelComponent(new JLabel("Class name: "), targetClassNameField);
+        targetClassName = new JBTextField(BuilderConstant.Template.INTERNAL_CLASS_NAME);
+        targetClassName.setEnabled(false);
+        builder.addLabelComponent(new JLabel("Class name: "), targetClassName);
         // Class name
 
+        // 'builder' method name
+        builderMethodName = new JBTextField(BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME);
+//        StyleUtil.setPreferredSize(builderMethodName);
+//        AutoCompleteUtil.setupAutoComplete(builderMethodName, Constants.Template.getDynamicValues());
+        builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
+        // 'builder' method name
+
         // Method prefix
-        targetMethodPrefix = new JBTextField();
+        targetMethodPrefix = new JBTextField(BuilderConstant.METHOD_PREFIX);
         targetMethodPrefix.setEnabled(false);
         builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefix);
         // Method prefix
 
         // Destination package
-        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, Constants.BUILDER_SETTINGS_RECENTS_KEY);
+        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, BuilderConstant.BUILDER_SETTINGS_RECENTS_KEY);
         targetPackageField.setEnabled(false);
         AnAction clickAction = new AnAction() {
             @Override
@@ -159,6 +170,13 @@ public class BuilderSettingsComponent {
                 targetPackageField.getChildComponent());
         builder.addLabelComponent(new JLabel(CodeInsightBundle.message("package.dependencies.progress.title")), targetPackageField);
         // Destination package
+
+        // src class builder
+        srcClassBuilder = new JCheckBox();
+        srcClassBuilder.setSelected(true);
+        innerBuilder.setEnabled(false);
+        builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
+        // src class builder
 
         // Inner builder
         innerBuilder = new JCheckBox();
@@ -222,10 +240,17 @@ public class BuilderSettingsComponent {
         // Custom template
 
         // Class name
-        targetClassNameField = new JBTextField(nullToEmpty(builderTemplate.getClassName()));
-        targetClassNameField.setEnabled(false);
-        builder.addLabelComponent(new JLabel("Class name: "), targetClassNameField);
+        targetClassName = new JBTextField(nullToEmpty(builderTemplate.getClassName()));
+        targetClassName.setEnabled(false);
+        builder.addLabelComponent(new JLabel("Class name: "), targetClassName);
         // Class name
+
+        // 'builder' method name
+        builderMethodName = new JBTextField(builderTemplate.getBuilderMethodName());
+        StyleUtil.setPreferredSize(builderMethodName);
+        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicValues());
+        builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
+        // 'builder' method name
 
         // Method prefix
         targetMethodPrefix = new JBTextField(nullToEmpty(builderTemplate.getMethodPrefix()));
@@ -234,7 +259,7 @@ public class BuilderSettingsComponent {
         // Method prefix
 
         // Destination package
-        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, Constants.BUILDER_SETTINGS_RECENTS_KEY);
+        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, BuilderConstant.BUILDER_SETTINGS_RECENTS_KEY);
         targetPackageField.setEnabled(false);
         AnAction clickAction = new AnAction() {
             @Override
@@ -247,6 +272,12 @@ public class BuilderSettingsComponent {
                 targetPackageField.getChildComponent());
         builder.addLabelComponent(new JLabel(CodeInsightBundle.message("action.flatten.packages")), targetPackageField);
         // Destination package
+
+        // src class builder
+        srcClassBuilder = new JCheckBox();
+        srcClassBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getSrcClassBuilder()));
+        builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
+        // src class builder
 
         // Inner builder
         innerBuilder = new JCheckBox();
@@ -307,8 +338,10 @@ public class BuilderSettingsComponent {
                 safeCollection(templates).forEach(customTemplate::addItem);
             }
             customTemplate.setSelectedItem(null);
-            targetClassNameField.setText("");
+            targetClassName.setText("");
+            builderMethodName.setText("");
             targetMethodPrefix.setText("");
+            srcClassBuilder.setSelected(false);
             innerBuilder.setSelected(false);
             butMethod.setSelected(false);
             useSingleField.setSelected(false);
@@ -320,8 +353,10 @@ public class BuilderSettingsComponent {
             boolean isInternal = myInternalRadio.isSelected();
             BuilderTemplate builderTemplate = (BuilderTemplate) customTemplate.getSelectedItem();
             if (!isInternal && builderTemplate != null) {
-                targetClassNameField.setText(builderTemplate.getClassName());
+                targetClassName.setText(builderTemplate.getClassName());
+                builderMethodName.setText(builderTemplate.getBuilderMethodName());
                 targetMethodPrefix.setText(builderTemplate.getMethodPrefix());
+                srcClassBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getSrcClassBuilder()));
                 innerBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getInnerBuilder()));
                 butMethod.setSelected(Boolean.TRUE.equals(builderTemplate.getButMethod()));
                 useSingleField.setSelected(Boolean.TRUE.equals(builderTemplate.getUseSingleField()));

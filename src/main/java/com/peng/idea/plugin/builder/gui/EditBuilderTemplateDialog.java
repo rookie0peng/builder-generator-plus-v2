@@ -11,7 +11,7 @@ import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
 import com.peng.idea.plugin.builder.model.BuilderTemplate;
 import com.peng.idea.plugin.builder.util.AutoCompleteUtil;
-import com.peng.idea.plugin.builder.util.Constants;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 import com.peng.idea.plugin.builder.util.PanelUtil;
 import com.peng.idea.plugin.builder.util.StyleUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +41,10 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
     private JPanel myMainPanel;
     private JBTextField templateName;
     private JBTextField targetClassName;
+    private JTextField builderMethodName;
     private JBTextField targetMethodPrefix;
     private ReferenceEditorComboWithBrowseButton targetPackageField;
+    private JCheckBox srcClassBuilder;
     private JCheckBox innerBuilder;
     private JCheckBox butMethod;
     private JCheckBox useSingleField;
@@ -105,9 +107,16 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
         // Class name
         targetClassName = new JBTextField(builderTemplate.getClassName());
         StyleUtil.setPreferredSize(targetClassName);
-        AutoCompleteUtil.setupAutoComplete(targetClassName, Constants.Template.getDynamicValues());
+        AutoCompleteUtil.setupAutoComplete(targetClassName, BuilderConstant.Template.getDynamicValues());
         builder.addLabelComponent(new JLabel("Class name: "), targetClassName);
         // Class name
+
+        // 'builder' method name
+        builderMethodName = new JBTextField(builderTemplate.getBuilderMethodName());
+        StyleUtil.setPreferredSize(builderMethodName);
+        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicValues());
+        builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
+        // 'builder' method name
 
         // Method prefix
         targetMethodPrefix = new JBTextField(builderTemplate.getMethodPrefix());
@@ -116,7 +125,7 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
         // Method prefix
 
         // Destination package
-        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, Constants.BUILDER_SETTINGS_RECENTS_KEY);
+        targetPackageField = new ReferenceEditorComboWithBrowseButton(null, null, this.project, true, BuilderConstant.BUILDER_SETTINGS_RECENTS_KEY);
         targetPackageField.setEnabled(false);
         AnAction clickAction = new AnAction() {
             @Override
@@ -129,6 +138,12 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
                 targetPackageField.getChildComponent());
         builder.addLabelComponent(new JLabel(CodeInsightBundle.message("action.flatten.packages")), targetPackageField);
         // Destination package
+
+        // src class builder
+        srcClassBuilder = new JCheckBox();
+        srcClassBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getSrcClassBuilder()));
+        builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
+        // src class builder
 
         // Inner builder
         innerBuilder = new JCheckBox();
@@ -156,13 +171,21 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
         String id = builderTemplate.getId();
         String templateName = this.templateName.getText();
         String targetClassName = this.targetClassName.getText();
+        String builderMethodName = this.builderMethodName.getText();
         String targetMethodPrefix = this.targetMethodPrefix.getText();
+
+        boolean srcClassBuilder = this.srcClassBuilder.isSelected();
         boolean innerBuilder = this.innerBuilder.isSelected();
         boolean butMethod = this.butMethod.isSelected();
         boolean useSingleField = this.useSingleField.isSelected();
+
         return BuilderTemplate.builder()
-                .id(id).templateName(templateName).className(targetClassName).methodPrefix(targetMethodPrefix)
-                .innerBuilder(innerBuilder).butMethod(butMethod).useSingleField(useSingleField)
+                .id(id).templateName(templateName).className(targetClassName).builderMethodName(builderMethodName)
+                .methodPrefix(targetMethodPrefix)
+
+                .srcClassBuilder(srcClassBuilder).innerBuilder(innerBuilder).butMethod(butMethod)
+                .useSingleField(useSingleField)
+
                 .build();
     }
 }

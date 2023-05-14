@@ -1,6 +1,7 @@
 package com.peng.idea.plugin.builder.model;
 
 import com.intellij.util.xmlb.annotations.Tag;
+import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 
 import java.util.Objects;
 
@@ -20,13 +21,13 @@ public class BuilderTemplate implements Entity {
 
     private String className;
 
-    private String builderMethodName;
+    private String builderMethodName = BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME;
 
     private String methodPrefix;
 
 
 
-    private Boolean srcClassBuilder;
+    private Boolean srcClassBuilder = true;
 
     private Boolean innerBuilder;
 
@@ -151,9 +152,9 @@ public class BuilderTemplate implements Entity {
         private String id;
         private String templateName;
         private String className;
-        private String builderMethodName;
+        private String builderMethodName = BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME;
         private String methodPrefix;
-        private Boolean srcClassBuilder;
+        private Boolean srcClassBuilder = true;
         private Boolean innerBuilder;
         private Boolean butMethod;
         private Boolean useSingleField;

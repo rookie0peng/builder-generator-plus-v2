@@ -2,8 +2,11 @@ package com.peng.idea.plugin.builder.util.constant;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
+import com.peng.idea.plugin.builder.util.ListUtil;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <pre>
@@ -13,6 +16,8 @@ import javax.swing.*;
  * </pre>
  */
 public final class BuilderConstant {
+
+    public static final String BUILDER_SETTINGS_RECENTS_KEY = "BuilderSettingsComponent.RecentsKey";
 
     public static final String BUILDER_SUFFIX = "Builder";
 
@@ -76,6 +81,34 @@ public final class BuilderConstant {
             public static final String EDITOR_PSI_CLASS = "editorPsiClass";
 
             public static final String DST_PSI_CLASS = "dstPsiClass";
+        }
+    }
+
+    public static final class Settings {
+
+        public static final String BUILDER = "Builder Generator Plus";
+
+        public static final String BUILDER_TEMPLATE = "Builder Template Plus";
+    }
+
+    public static final class Template {
+
+        public static final String INTERNAL_CLASS_NAME = "${internalClassName}";
+
+        public static final String INTERNAL_BUILDER_METHOD_NAME = "${internalBuilderMethodName}";
+
+        public static final String SRC_CLASS_NAME = "${srcClassName}";
+
+        private static final List<String> DYNAMIC_VALUES = ListUtil.newArrayList(INTERNAL_CLASS_NAME, SRC_CLASS_NAME);
+
+        public static List<String> getDynamicValues() {
+            return new ArrayList<>(DYNAMIC_VALUES);
+        }
+
+        public static final class Value {
+
+
+            public static final String INTERNAL_BUILDER_METHOD_NAME = "builder";
         }
     }
 }
