@@ -118,14 +118,14 @@ public class AddBuilderTemplateDialog extends DialogWrapper {
         // Class name
         targetClassName = new JBTextField();
         StyleUtil.setPreferredSize(targetClassName);
-        AutoCompleteUtil.setupAutoComplete(targetClassName, BuilderConstant.Template.getDynamicValues());
+        AutoCompleteUtil.setupAutoComplete(targetClassName, BuilderConstant.Template.getDynamicClassNameValues());
         builder.addLabelComponent(new JLabel("Class name: "), targetClassName);
         // Class name
 
         // 'builder' method name
         builderMethodName = new JBTextField();
         StyleUtil.setPreferredSize(builderMethodName);
-        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicValues());
+        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicBuilderMethodNameValues());
         builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
         // 'builder' method name
 
@@ -152,7 +152,7 @@ public class AddBuilderTemplateDialog extends DialogWrapper {
 
         // src class builder
         srcClassBuilder = new JCheckBox();
-        srcClassBuilder.setSelected(true);
+//        srcClassBuilder.setSelected(true);
         builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
         // src class builder
 

@@ -107,14 +107,14 @@ public class EditBuilderTemplateDialog extends DialogWrapper {
         // Class name
         targetClassName = new JBTextField(builderTemplate.getClassName());
         StyleUtil.setPreferredSize(targetClassName);
-        AutoCompleteUtil.setupAutoComplete(targetClassName, BuilderConstant.Template.getDynamicValues());
+        AutoCompleteUtil.setupAutoComplete(targetClassName, BuilderConstant.Template.getDynamicClassNameValues());
         builder.addLabelComponent(new JLabel("Class name: "), targetClassName);
         // Class name
 
         // 'builder' method name
         builderMethodName = new JBTextField(builderTemplate.getBuilderMethodName());
         StyleUtil.setPreferredSize(builderMethodName);
-        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicValues());
+        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicBuilderMethodNameValues());
         builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
         // 'builder' method name
 

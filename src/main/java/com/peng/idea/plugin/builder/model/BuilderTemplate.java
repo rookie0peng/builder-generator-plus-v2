@@ -1,8 +1,10 @@
 package com.peng.idea.plugin.builder.model;
 
 import com.intellij.util.xmlb.annotations.Tag;
+import com.peng.idea.plugin.builder.util.GsonUtil;
 import com.peng.idea.plugin.builder.util.constant.BuilderConstant;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -224,6 +226,104 @@ public class BuilderTemplate implements Entity {
             builderTemplate.setUseSingleField(useSingleField);
             return builderTemplate;
         }
+    }
+
+    public static final class ImmutableBuilderTemplate extends BuilderTemplate {
+
+        public static final ImmutableBuilderTemplate INTERNAL_BUILDER_TEMPLATE = new ImmutableBuilderTemplate(
+                BuilderTemplate.builder()
+                        .id("---internal---")
+                        .templateName("")
+                        .className(BuilderConstant.Template.INTERNAL_CLASS_NAME)
+                        .builderMethodName(BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME)
+                        .methodPrefix(BuilderConstant.METHOD_PREFIX)
+
+                        .srcClassBuilder(true)
+                        .innerBuilder(false)
+                        .butMethod(false)
+                        .useSingleField(false)
+
+                        .build()
+        );
+
+        public ImmutableBuilderTemplate() {
+
+        }
+
+        public ImmutableBuilderTemplate(BuilderTemplate builderTemplate) {
+            super.setId(builderTemplate.getId());
+            super.setTemplateName(builderTemplate.getTemplateName());
+            super.setClassName(builderTemplate.getClassName());
+            super.setBuilderMethodName(builderTemplate.getBuilderMethodName());
+            super.setMethodPrefix(builderTemplate.getMethodPrefix());
+
+            super.setSrcClassBuilder(builderTemplate.getSrcClassBuilder());
+            super.setInnerBuilder(builderTemplate.getInnerBuilder());
+            super.setButMethod(builderTemplate.getButMethod());
+            super.setUseSingleField(builderTemplate.getUseSingleField());
+        }
+
+        static UnsupportedOperationException uoe() { return new UnsupportedOperationException(); }
+
+        @Override
+        public void setId(String id) {
+            throw uoe();
+        }
+
+        @Override
+        public void setTemplateName(String templateName) {
+            super.setTemplateName(templateName);
+        }
+
+        @Override
+        public void setClassName(String className) {
+            super.setClassName(className);
+        }
+
+        @Override
+        public void setBuilderMethodName(String builderMethodName) {
+            super.setBuilderMethodName(builderMethodName);
+        }
+
+        @Override
+        public void setMethodPrefix(String methodPrefix) {
+            super.setMethodPrefix(methodPrefix);
+        }
+
+        @Override
+        public void setSrcClassBuilder(Boolean srcClassBuilder) {
+            super.setSrcClassBuilder(srcClassBuilder);
+        }
+
+        @Override
+        public void setInnerBuilder(Boolean innerBuilder) {
+            super.setInnerBuilder(innerBuilder);
+        }
+
+        @Override
+        public void setButMethod(Boolean butMethod) {
+            super.setButMethod(butMethod);
+        }
+
+        @Override
+        public void setUseSingleField(Boolean useSingleField) {
+            super.setUseSingleField(useSingleField);
+        }
+
+        public static void main(String[] args) {
+            BuilderTemplate build = BuilderTemplate.builder().id("q111").build();
+            ImmutableBuilderTemplate immutableBuilderTemplate = new ImmutableBuilderTemplate(build);
+            System.out.println("over, " + GsonUtil.GSON.toJson(immutableBuilderTemplate));
+
+        }
+
+    }
+
+    public static void main(String[] args) {
+        BuilderTemplate build = BuilderTemplate.builder().id("q111").build();
+        ImmutableBuilderTemplate immutableBuilderTemplate = new ImmutableBuilderTemplate(build);
+        System.out.println("over, " + GsonUtil.GSON.toJson(immutableBuilderTemplate));
+
     }
 }
 

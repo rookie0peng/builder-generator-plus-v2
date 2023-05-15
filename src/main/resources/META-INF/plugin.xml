@@ -102,7 +102,7 @@
         <action id="com.peng.idea.plugin.builder.action.RemoveBuilderActionV2"
                 class="com.peng.idea.plugin.builder.action.RemoveBuilderActionV2"
                 text="Remove Builder Class" description="Remove builder">
-            <keyboard-shortcut keymap="$default" first-keystroke="control alt D"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt shift D"/>
         </action>
         <!--<action id="com.peng.idea.plugin.builder.action.GoToBuilderAction"
                 class="com.peng.idea.plugin.builder.action.GoToBuilderAction"

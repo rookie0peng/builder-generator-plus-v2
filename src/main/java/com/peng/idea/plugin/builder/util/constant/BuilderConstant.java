@@ -99,10 +99,16 @@ public final class BuilderConstant {
 
         public static final String SRC_CLASS_NAME = "${srcClassName}";
 
-        private static final List<String> DYNAMIC_VALUES = ListUtil.newArrayList(INTERNAL_CLASS_NAME, SRC_CLASS_NAME);
+        private static final List<String> DYNAMIC_CLASS_NAME_VALUES = ListUtil.newArrayList(INTERNAL_CLASS_NAME, SRC_CLASS_NAME);
 
-        public static List<String> getDynamicValues() {
-            return new ArrayList<>(DYNAMIC_VALUES);
+        private static final List<String> DYNAMIC_BUILDER_METHOD_NAME_VALUES = ListUtil.newArrayList(INTERNAL_BUILDER_METHOD_NAME);
+
+        public static List<String> getDynamicClassNameValues() {
+            return new ArrayList<>(DYNAMIC_CLASS_NAME_VALUES);
+        }
+
+        public static List<String> getDynamicBuilderMethodNameValues() {
+            return new ArrayList<>(DYNAMIC_BUILDER_METHOD_NAME_VALUES);
         }
 
         public static final class Value {

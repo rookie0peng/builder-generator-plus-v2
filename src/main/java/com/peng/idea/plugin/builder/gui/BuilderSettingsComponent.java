@@ -30,6 +30,7 @@ import static com.peng.idea.plugin.builder.util.CollectionUtil.safeCollection;
 import static com.peng.idea.plugin.builder.util.ObjectUtil.safeObject;
 import static com.peng.idea.plugin.builder.util.StringUtil.nullToEmpty;
 import static java.util.Objects.isNull;
+import static com.peng.idea.plugin.builder.util.BooleanUtil.*;
 
 /**
  * <pre>
@@ -44,21 +45,23 @@ public class BuilderSettingsComponent {
 
     private static final String LISTENER_KEY = "BuilderSettingsComponent";
 
+    private static final BuilderTemplate BUILDER_TEMPLATE = BuilderTemplate.ImmutableBuilderTemplate.INTERNAL_BUILDER_TEMPLATE;
+
     private final Project project;
     private JPanel myMainPanel;
-    private final JPanel myDefault = new JPanel();
-    private final ButtonGroup myDefaultGroup = new ButtonGroup();
     private JRadioButton myInternalRadio;
     private JRadioButton myCustomRadio;
     private final ComboBox<BuilderTemplate> customTemplate = new ComboBox<>();
     private JTextField targetClassName;
     private JTextField builderMethodName;
-    private JTextField targetMethodPrefix;
+    private JTextField methodPrefix;
     private JCheckBox srcClassBuilder;
     private JCheckBox innerBuilder;
     private JCheckBox butMethod;
     private JCheckBox useSingleField;
     private ReferenceEditorComboWithBrowseButton targetPackageField;
+
+
 //    private EditorComboBox targetPackageField;
 //    private final JBTextField myUserNameText = new JBTextField();
 //    private final JBCheckBox myIdeaUserStatus = new JBCheckBox("Do you use IntelliJ IDEA? ");
@@ -114,6 +117,8 @@ public class BuilderSettingsComponent {
         PanelUtil builder = PanelUtil.builder();
 
         // Default
+        JPanel myDefault = new JPanel();
+        ButtonGroup myDefaultGroup = new ButtonGroup();
         myInternalRadio = new JRadioButton("Internal", true);
         myInternalRadio.setActionCommand("Internal");
         myInternalRadio.addActionListener(changeBelowFormListener());
@@ -145,15 +150,16 @@ public class BuilderSettingsComponent {
 
         // 'builder' method name
         builderMethodName = new JBTextField(BuilderConstant.Template.INTERNAL_BUILDER_METHOD_NAME);
+        builderMethodName.setEnabled(false);
 //        StyleUtil.setPreferredSize(builderMethodName);
 //        AutoCompleteUtil.setupAutoComplete(builderMethodName, Constants.Template.getDynamicValues());
         builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
         // 'builder' method name
 
         // Method prefix
-        targetMethodPrefix = new JBTextField(BuilderConstant.METHOD_PREFIX);
-        targetMethodPrefix.setEnabled(false);
-        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefix);
+        methodPrefix = new JBTextField(BuilderConstant.METHOD_PREFIX);
+        methodPrefix.setEnabled(false);
+        builder.addLabelComponent(new JLabel("Method prefix: "), methodPrefix);
         // Method prefix
 
         // Destination package
@@ -174,7 +180,7 @@ public class BuilderSettingsComponent {
         // src class builder
         srcClassBuilder = new JCheckBox();
         srcClassBuilder.setSelected(true);
-        innerBuilder.setEnabled(false);
+        srcClassBuilder.setEnabled(false);
         builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
         // src class builder
 
@@ -215,6 +221,8 @@ public class BuilderSettingsComponent {
         PanelUtil builder = PanelUtil.builder();
 
         // Default
+        JPanel myDefault = new JPanel();
+        ButtonGroup myDefaultGroup = new ButtonGroup();
         boolean isInternal = Boolean.TRUE.equals(builderSettings.getInternal());
         myInternalRadio = new JRadioButton("Internal", isInternal);
         myInternalRadio.setActionCommand("Internal");
@@ -247,15 +255,16 @@ public class BuilderSettingsComponent {
 
         // 'builder' method name
         builderMethodName = new JBTextField(builderTemplate.getBuilderMethodName());
-        StyleUtil.setPreferredSize(builderMethodName);
-        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicValues());
+        builderMethodName.setEnabled(false);
+//        StyleUtil.setPreferredSize(builderMethodName);
+//        AutoCompleteUtil.setupAutoComplete(builderMethodName, BuilderConstant.Template.getDynamicBuilderMethodNameValues());
         builder.addLabelComponent(new JLabel("'builder' method name: "), builderMethodName);
         // 'builder' method name
 
         // Method prefix
-        targetMethodPrefix = new JBTextField(nullToEmpty(builderTemplate.getMethodPrefix()));
-        targetMethodPrefix.setEnabled(false);
-        builder.addLabelComponent(new JLabel("Method prefix: "), targetMethodPrefix);
+        methodPrefix = new JBTextField(nullToEmpty(builderTemplate.getMethodPrefix()));
+        methodPrefix.setEnabled(false);
+        builder.addLabelComponent(new JLabel("Method prefix: "), methodPrefix);
         // Method prefix
 
         // Destination package
@@ -336,15 +345,26 @@ public class BuilderSettingsComponent {
                 List<BuilderTemplate> templates = BuilderTemplateManager.getInstance().getTemplates();
                 customTemplate.removeAllItems();
                 safeCollection(templates).forEach(customTemplate::addItem);
+
+                targetClassName.setText("");
+                builderMethodName.setText("");
+                methodPrefix.setText("");
+                srcClassBuilder.setSelected(false);
+                innerBuilder.setSelected(false);
+
+                butMethod.setSelected(false);
+                useSingleField.setSelected(false);
+            } else {
+                targetClassName.setText(BUILDER_TEMPLATE.getClassName());
+                builderMethodName.setText(BUILDER_TEMPLATE.getBuilderMethodName());
+                methodPrefix.setText(BUILDER_TEMPLATE.getMethodPrefix());
+                srcClassBuilder.setSelected(nullToFalse(BUILDER_TEMPLATE.getSrcClassBuilder()));
+                innerBuilder.setSelected(nullToFalse(BUILDER_TEMPLATE.getInnerBuilder()));
+
+                butMethod.setSelected(nullToFalse(BUILDER_TEMPLATE.getButMethod()));
+                useSingleField.setSelected(nullToFalse(BUILDER_TEMPLATE.getUseSingleField()));
             }
             customTemplate.setSelectedItem(null);
-            targetClassName.setText("");
-            builderMethodName.setText("");
-            targetMethodPrefix.setText("");
-            srcClassBuilder.setSelected(false);
-            innerBuilder.setSelected(false);
-            butMethod.setSelected(false);
-            useSingleField.setSelected(false);
         };
     }
 
@@ -355,7 +375,7 @@ public class BuilderSettingsComponent {
             if (!isInternal && builderTemplate != null) {
                 targetClassName.setText(builderTemplate.getClassName());
                 builderMethodName.setText(builderTemplate.getBuilderMethodName());
-                targetMethodPrefix.setText(builderTemplate.getMethodPrefix());
+                methodPrefix.setText(builderTemplate.getMethodPrefix());
                 srcClassBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getSrcClassBuilder()));
                 innerBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getInnerBuilder()));
                 butMethod.setSelected(Boolean.TRUE.equals(builderTemplate.getButMethod()));

@@ -67,7 +67,7 @@ public class GenerateBuilderActionHandlerV2 extends AbstractBuilderActionHandler
             true, List.of(
                     RegenerateBuilderAdditionalActionV2.INSTANCE,
                     JumpToBuilderAdditionalActionV2.INSTANCE,
-                    GenerateBuilderAdditionalActionV2.INSTANCE,
+//                    GenerateBuilderAdditionalActionV2.INSTANCE,
                     RemoveBuilderAdditionalActionV2.INSTANCE
             ),
             false, List.of(
