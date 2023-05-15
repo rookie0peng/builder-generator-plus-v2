@@ -151,7 +151,7 @@ public class BuilderPsiClassBuilder {
         if (srcClassBuilder) {
             //        String prefix = isVowel(srcClassName.toLowerCase(Locale.ENGLISH).charAt(0)) ? AN_PREFIX : A_PREFIX;
             PsiMethod staticSrcMethod = elementFactory.createMethodFromText(
-                    "public static " + builderClassName + " builder() { return " + builderClassName + "." + builderMethodName + "(); }", srcClass);
+                    "public static " + builderClassName + " " + builderMethodName + " () { return " + builderClassName + "." + builderMethodName + "(); }", srcClass);
             srcClass.add(staticSrcMethod);
         }
         return this;

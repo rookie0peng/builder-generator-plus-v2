@@ -285,6 +285,7 @@ public class BuilderSettingsComponent {
         // src class builder
         srcClassBuilder = new JCheckBox();
         srcClassBuilder.setSelected(Boolean.TRUE.equals(builderTemplate.getSrcClassBuilder()));
+        srcClassBuilder.setEnabled(false);
         builder.addLabelComponent(new JLabel("Src class builder method: "), srcClassBuilder);
         // src class builder
 
