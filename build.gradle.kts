@@ -34,8 +34,7 @@ intellij {
 
 //    plugins.set(listOf(/* Plugin Dependencies */))
     plugins.set(listOf("java"))
-
-
+    updateSinceUntilBuild.set(false)
 }
 
 tasks {
@@ -47,7 +46,6 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231")
-        untilBuild.set("231.*")
     }
 
     signPlugin {
